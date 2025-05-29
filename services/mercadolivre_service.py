@@ -29,3 +29,9 @@ class MercadoLivreService:
         response = requests.post(f"{self.base_url}{endpoint}", headers=self.get_headers(), json=json)
         response.raise_for_status()
         return response.json()
+
+    def put(self, endpoint, json):
+        response = requests.put(f"{self.base_url}{endpoint}", headers=self.get_headers(), json=json)
+        response.raise_for_status()
+        return response.json()
+

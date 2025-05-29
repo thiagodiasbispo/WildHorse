@@ -1,0 +1,14 @@
+{
+  "api": {
+    "client_id": "6822479547529757",
+    "client_secret": "1STG5jmVTnKYzLGXNhLmGgeur6lPX9t6",
+    "authorization_code": "",
+    "url_token": "https://api.mercadolibre.com/oauth/token",
+    "url_autenticacao": "https://auth.mercadolivre.com.br/authorization",
+    "url_base": "https://api.mercadolibre.com",
+    "redirect_uri": "https://www.google.com",
+    "ultimo_token": "",
+    "refresh_token": "",
+    "validade_token": ""
+  }
+}

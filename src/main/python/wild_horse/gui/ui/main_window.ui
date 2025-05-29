@@ -1,0 +1,627 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1337</width>
+    <height>681</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Wild Horse Motors</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <widget class="QWidget" name="widgetApenasIcones" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>71</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>71</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QWidget{
+	#background-color: rgba(246, 1, 0, 110);
+}
+
+QPushButton {
+	color:white;
+	height: 30px;
+    border:none;
+    border-top-left-radius:10px;
+    border-bottom-left-radius:10px;
+}
+
+QPushButton::checked{
+  background-color: #F5FAFE;
+  color:#1F95EF;
+font-weight:bold;
+}
+
+QPushButton:hover
+{
+	border-style:solid;
+    border-width:1px;
+    background-color: #F5FAFE;
+    color:#1F95EF;
+    font-weight:bold;
+}</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="maximumSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(4, 14, 143);</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../../../resources.qrc">:/icones/icones/logo.jpg</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>15</number>
+         </property>
+         <property name="topMargin">
+          <number>15</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="btnShowMenuComTexto">
+           <property name="toolTip">
+            <string>Expandir menu</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:hover
+{
+	border-style:solid;
+    border-width:1px;
+    background-color: #F5FAFE;
+    color:#1F95EF;
+    font-weight:bold;
+}
+</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/icones/icones/menu_collapse.png</normaloff>:/icones/icones/menu_collapse.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnMeliSemTexto">
+           <property name="toolTip">
+            <string>Abrir opções de integração com o Mercado Livre</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/icones/icones/favicon.ico</normaloff>:/icones/icones/favicon.ico</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoExclusive">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>307</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnConfiguracoesSemTexto">
+         <property name="toolTip">
+          <string>Configurações</string>
+         </property>
+         <property name="statusTip">
+          <string>Sobre o sistema</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../resources.qrc">
+           <normaloff>:/icones/icones/configuracoes.png</normaloff>:/icones/icones/configuracoes.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnSobreSemTexto">
+         <property name="toolTip">
+          <string>Sobre o sistema</string>
+         </property>
+         <property name="statusTip">
+          <string>Sobre o sistema</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../resources.qrc">
+           <normaloff>:/icones/icones/sobre.png</normaloff>:/icones/icones/sobre.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="widgetIconeseNome" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>191</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>191</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QWidget{
+	#background-color: rgba(246, 1, 0, 110);
+}
+
+QPushButton {
+	color:white;
+	text-align:left;
+	height: 30px;
+    border:none;
+	padding-left:10px;
+    border-top-left-radius:10px;
+    border-bottom-left-radius:10px;
+}
+
+QPushButton::checked{
+  background-color: #F5FAFE;
+  color:#1F95EF;
+font-weight:bold;
+}
+
+QPushButton:hover
+{
+	border-style:solid;
+    border-width:1px;
+    background-color: #F5FAFE;
+    color:#1F95EF;
+    font-weight:bold;
+}</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="lblLogoEmpresa">
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>150</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../../../resources.qrc">:/icones/icones/logo.jpg</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>15</number>
+         </property>
+         <property name="topMargin">
+          <number>15</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="btnShowMenuSemTexto">
+           <property name="contextMenuPolicy">
+            <enum>Qt::NoContextMenu</enum>
+           </property>
+           <property name="toolTip">
+            <string>Ativiar menu simplificado</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:hover
+{
+	border-style:solid;
+    border-width:1px;
+    background-color: #F5FAFE;
+    color:#1F95EF;
+    font-weight:bold;
+}</string>
+           </property>
+           <property name="text">
+            <string>  Menu simplificado</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/icones/icones/menu_collapse.png</normaloff>:/icones/icones/menu_collapse.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>false</bool>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnMeliComTexto">
+           <property name="toolTip">
+            <string>Abrir opções de integração com o Mercado Livre</string>
+           </property>
+           <property name="text">
+            <string>Integração Mercado Livre</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/icones/icones/favicon.ico</normaloff>:/icones/icones/favicon.ico</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoExclusive">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>307</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnConfiguracoesComTexto">
+         <property name="toolTip">
+          <string>Configurações</string>
+         </property>
+         <property name="statusTip">
+          <string>Sobre o sistema</string>
+         </property>
+         <property name="text">
+          <string>Configuracões</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../resources.qrc">
+           <normaloff>:/icones/icones/configuracoes.png</normaloff>:/icones/icones/configuracoes.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnSobreComTexto">
+         <property name="toolTip">
+          <string>Sobre o sistema</string>
+         </property>
+         <property name="statusTip">
+          <string>Sobre o sistema</string>
+         </property>
+         <property name="text">
+          <string>Sobre</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../resources.qrc">
+           <normaloff>:/icones/icones/sobre.png</normaloff>:/icones/icones/sobre.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="widget_central" native="true">
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(255, 255, 255);</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QFrame" name="frameCentralNomeSistema">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <spacer name="verticalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblSigla">
+            <property name="font">
+             <font>
+              <pointsize>32</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Wild Horse Motors</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources>
+  <include location="../../../resources.qrc"/>
+  <include location="C:/Users/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>btnMeliSemTexto</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>btnMeliComTexto</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>35</x>
+     <y>135</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>230</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnSobreSemTexto</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>btnSobreComTexto</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>677</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>267</x>
+     <y>677</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnMeliComTexto</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>btnMeliSemTexto</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>205</x>
+     <y>230</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>23</x>
+     <y>130</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnSobreComTexto</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>btnSobreSemTexto</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>267</x>
+     <y>677</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>64</x>
+     <y>677</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnShowMenuSemTexto</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>widgetApenasIcones</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>245</x>
+     <y>185</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>68</x>
+     <y>47</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnShowMenuSemTexto</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>widgetIconeseNome</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>266</x>
+     <y>185</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>252</x>
+     <y>37</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnShowMenuComTexto</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>widgetIconeseNome</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>40</x>
+     <y>84</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>170</x>
+     <y>68</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnShowMenuComTexto</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>widgetApenasIcones</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>53</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>66</x>
+     <y>74</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

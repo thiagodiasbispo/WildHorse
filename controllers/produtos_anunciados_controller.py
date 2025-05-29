@@ -64,7 +64,7 @@ class ProdutosAnunciadosController:
     def exportar_para_excel(self, produtos):
         exportar_produtos_para_excel(produtos)
 
-    def post_compatibilidades(self, compatibilidades: list[CompatibilidadeProdutoModel]):
+    def put_compatibilidades(self, compatibilidades: list[CompatibilidadeProdutoModel]):
         for compat in compatibilidades:
             self.service.post(
                 f"/items/{compat.item_id}/compatible_products",
