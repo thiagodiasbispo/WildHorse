@@ -33,6 +33,12 @@ class AtributoCarroGet(DefaultBaseModel):
     id: int
     name: str
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name
+        }
+
 
 class MarcaGet(AtributoCarroGet):
     pass

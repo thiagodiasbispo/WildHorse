@@ -179,7 +179,7 @@ class CustomRequestStrategy(RequestStrategy):
 
 
 class RequisitionAwaiter:
-    def __init__(self, tempo_espera:0.1):
+    def __init__(self, tempo_espera = 0.1):
         self.__last_requisition = None
         self.tempo_espera = tempo_espera
 

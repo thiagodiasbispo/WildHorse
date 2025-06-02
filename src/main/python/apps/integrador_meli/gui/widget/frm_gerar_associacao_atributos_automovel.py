@@ -77,16 +77,13 @@ class FrmGerarAssociacaoAtributosAutomovel(QWidget):
                 batch = []
                 for marca in catalogo_controller.get_marcas():
                     for modelo in catalogo_controller.get_modelos_marca(marca.id):
-                        for ano in catalogo_controller.get_anos_marca_modelo(marca.id, modelo.id):
-                            batch.append(AssociacaoAtributosAutomovel(marca=marca.name,
-                                                                      marca_id=marca.id,
-                                                                      modelo=modelo.name,
-                                                                      modelo_id=modelo.id,
-                                                                      ano=ano.name,
-                                                                      ano_id=ano.id))
-                            if len(batch) == batch_size:
-                                yield batch
-                                batch.clear()
+                        batch.append(AssociacaoAtributosAutomovel(marca=marca.name,
+                                                                  marca_id=marca.id,
+                                                                  modelo=modelo.name,
+                                                                  modelo_id=modelo.id))
+                        if len(batch) == batch_size:
+                            yield batch
+                            batch = []
                 if batch:
                     yield batch
 

@@ -27,8 +27,6 @@ class AssociacaoAtributosAutomovelModel(QStandardItemModel):
         self.setHorizontalHeaderItem(next(i), QStandardItem("Marca ID"))
         self.setHorizontalHeaderItem(next(i), QStandardItem("Modelo "))
         self.setHorizontalHeaderItem(next(i), QStandardItem("Modelo ID"))
-        self.setHorizontalHeaderItem(next(i), QStandardItem("Ano"))
-        self.setHorizontalHeaderItem(next(i), QStandardItem("Ano ID"))
 
 
     def rowCount(self, parent = ...):
@@ -44,6 +42,4 @@ class AssociacaoAtributosAutomovelModel(QStandardItemModel):
             self._set_item(next(column_index), associacao.marca_id)
             self._set_item(next(column_index), associacao.modelo)
             self._set_item(next(column_index), associacao.modelo_id)
-            self._set_item(next(column_index), associacao.ano)
-            self._set_item(next(column_index), associacao.ano_id)
-            self._data.append(associacao)
+        self._data.extend(associacoes)

@@ -7,8 +7,6 @@ class AssociacaoAtributosAutomovel:
     marca_id:str
     modelo:str
     modelo_id:str
-    ano:str
-    ano_id:str
 
     def to_dict(self):
         return asdict(self)
