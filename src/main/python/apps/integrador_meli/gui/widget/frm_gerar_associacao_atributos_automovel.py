@@ -11,7 +11,7 @@ from apps.integrador_meli.gui.ui.frm_gerar_associacao_atributos_automovel import
 from apps.integrador_meli.gui.widget.models import AssociacaoAtributosAutomovelModel
 from apps.integrador_meli.models import AssociacaoAtributosAutomovel
 from comum.configuracoes.configuracao_meli_service import ler_configuracoes_api_meli
-from comum.widgets import escolher_diretorio, mostrar_mensagem_erro
+from comum.widget_utils import escolher_diretorio, mostrar_mensagem_erro
 from dominio.meli.api.autenticacao_utils import usuario_esta_autenticado
 from dominio.meli.api.controller.catalogo_de_dominio import CatalogoDeDominioController
 from dominio.meli.api.controller_factory import MeliApiControllerFactory

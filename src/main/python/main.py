@@ -1,17 +1,15 @@
 import sys
 from pathlib import Path
 
+import qdarktheme
 from fbs_runtime.application_context import is_frozen
 from fbs_runtime.application_context.PyQt6 import ApplicationContext
-import qdarktheme
 
-from wild_horse.gui.widget.main_windows import MainWindows
 from comum.configuracoes.configuracao_meli_service import (
     carga_inicial_se_primeira_execucao,
     TipoAmbienteDesenvolvimento,
 )
-
-from comum.widgets import mostrar_mensagem_warning
+from wild_horse.gui.widget.main_windows import MainWindows
 
 path = Path(__file__).parent
 

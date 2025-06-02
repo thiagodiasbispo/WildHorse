@@ -42,7 +42,7 @@ QWidget{
         <item row="1" column="0">
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Planilha com marcas, modelos e anos</string>
+           <string>Planilha com associação de atributos:</string>
           </property>
          </widget>
         </item>
@@ -132,6 +132,9 @@ QWidget{
         </item>
         <item>
          <widget class="QPushButton" name="btnInserirCompatibilidades">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Inserir compatiblidades</string>
           </property>

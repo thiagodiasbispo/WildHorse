@@ -79,6 +79,7 @@ class Ui_FrmInserirCompatibilidadesMeli(object):
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.btnInserirCompatibilidades = QtWidgets.QPushButton(parent=self.groupBox_3)
+        self.btnInserirCompatibilidades.setEnabled(False)
         self.btnInserirCompatibilidades.setObjectName("btnInserirCompatibilidades")
         self.horizontalLayout_2.addWidget(self.btnInserirCompatibilidades)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
@@ -111,7 +112,7 @@ class Ui_FrmInserirCompatibilidadesMeli(object):
         _translate = QtCore.QCoreApplication.translate
         FrmInserirCompatibilidadesMeli.setWindowTitle(_translate("FrmInserirCompatibilidadesMeli", "Compatibilidades"))
         self.groupBox_2.setTitle(_translate("FrmInserirCompatibilidadesMeli", "Dados de entrada"))
-        self.label_2.setText(_translate("FrmInserirCompatibilidadesMeli", "Planilha com marcas, modelos e anos"))
+        self.label_2.setText(_translate("FrmInserirCompatibilidadesMeli", "Planilha com associação de atributos:"))
         self.label.setText(_translate("FrmInserirCompatibilidadesMeli", "Planilha de compatibildade:"))
         self.groupBox_3.setTitle(_translate("FrmInserirCompatibilidadesMeli", "Pré-visualização"))
         self.btnInserirCompatibilidades.setText(_translate("FrmInserirCompatibilidadesMeli", "Inserir compatiblidades"))
