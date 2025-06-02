@@ -69,7 +69,7 @@ class ResultadoPostCompatibilidadeAtributoCarroVariosPost(DefaultBaseModel):
 
 class CompatibilidadePorDominioFamiliaProdutoPost(DefaultBaseModel):
     domain_id: str
-    atrributes: list[CompatibilidadeAtributoCarroPost | CompatibilidadeAtributoCarroVariosPost]
+    attributes: list[CompatibilidadeAtributoCarroPost | CompatibilidadeAtributoCarroVariosPost]
 
 
 class ResultadoCompatibilidadePorDominioFamiliaProdutoPost(DefaultBaseModel):

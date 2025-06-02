@@ -1,4 +1,5 @@
 import os
+import traceback
 from datetime import datetime
 from pathlib import Path
 
@@ -7,8 +8,9 @@ from PyQt6.QtWidgets import QWidget
 
 from apps.integrador_meli.controller import InserirCompatibilidadeController
 from apps.integrador_meli.gui.ui.frm_inserir_compatibilidades_meli import Ui_FrmInserirCompatibilidadesMeli
-from comum.widget_models import DataframeModel
-from comum.widget_utils import escolher_panilha_excel
+from comum.widget_models import TableDataframeModel
+from comum.widget_utils import escolher_panilha_excel, mostrar_mensagem_erro
+from dominio.meli.api.autenticacao_utils import usuario_esta_autenticado
 
 
 class FrmInserirCompatibilidadeMeli(QWidget):
@@ -36,10 +38,18 @@ class FrmInserirCompatibilidadeMeli(QWidget):
 
     def _inserir_compatibilidades(self):
         try:
-            self._compatibilidade_controller.inserir_compatibilidade_por_planilha(self.planilha_compatibilidade,
+            if not usuario_esta_autenticado():
+                mostrar_mensagem_erro(self, titulo="Erro de autenticação",
+                                      mensagem="Você não está autenticado! Autentique-se na tela de Configurações da Mercado Livre.")
+                return
+            gerador = self._compatibilidade_controller.inserir_compatibilidade_por_planilha(self.planilha_compatibilidade,
                                                                                   self.planilha_associacao_atributos)
+            for mlb, compat_result in gerador:
+               self._log_info(f"Compatibilidades inserida para o MLB {mlb}: {compat_result.created_compatibilities_count}")
+
         except Exception as e:
             self._log_error(str(e))
+            traceback.print_exc()
 
     def _habilitar_botao_inserir_compatibilidades(self):
         habilitar = bool(self.planilha_compatibilidade) and bool(self.planilha_associacao_atributos)
@@ -60,9 +70,9 @@ class FrmInserirCompatibilidadeMeli(QWidget):
         self._atualizar_tabela_compatibilidades()
 
     def _atualizar_tabela_compatibilidades(self):
-        df = pd.read_excel(self.planilha_compatibilidade)
+        df = self._compatibilidade_controller.ler_planilha_compatibilidade(self.planilha_compatibilidade)
         if not (model := self.ui.tblCompatibilidades.model()):
-            self.ui.tblCompatibilidades.setModel(DataframeModel(df))
+            self.ui.tblCompatibilidades.setModel(TableDataframeModel(df))
         else:
             model.set_df(df)
         self.ui.tblCompatibilidades.resizeColumnsToContents()

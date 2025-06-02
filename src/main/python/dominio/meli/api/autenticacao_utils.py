@@ -27,6 +27,7 @@ def usuario_esta_autenticado():
         refresh_token(config)
         return True
     except Exception:
+        print("Não foi possível atualizar token...")
         return False
 
 
@@ -39,7 +40,7 @@ def get_url_autenticacao():
 
 
 def refresh_token(config=None):
-    print("Atualizando token")
+    print("Atualizando token...")
 
     if not config:
         config = ler_configuracoes_api_meli()

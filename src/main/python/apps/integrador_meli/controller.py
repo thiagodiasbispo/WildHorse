@@ -72,36 +72,45 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
 
         return df_compat.reset_index()
 
+    def ler_planilha_compatibilidade(self, planilha_compatibilidade):
+        df = pd.read_excel(planilha_compatibilidade)
+        for ano in [self.ANO_INICIAL, self.ANO_FINAL]:
+                df[ano] = df[ano].fillna('')
+        return df
     def expandir_planilha_compatibilidade(self, df_compat, df_associacao) -> list[dict]:
         df = self.get_ids_meli_correspondentes(df_compat, df_associacao)
         data_list = []
-
         for _, row in df.iterrows():
-            ano_final = row[self.ANO_FINAL]
-            ano_inicial = row[self.ANO_INICIAL]
-            data = {self.MARCA_ID: row[self.MARCA_ID], self.MODELO_ID: row[self.MODELO_ID], self.MLB: row[self.MLB]}
+            ano_inicial = row[self.ANO_INICIAL] or None
+            ano_final = row[self.ANO_FINAL] or None
 
-            if ano_final == ano_inicial:
-                anos = [int(ano_inicial)]
-            else:
-                self._await()
-                anos_disponiveis = self._catalogo_dominio_controller.get_anos_marca_modelo(data[self.MARCA_ID],
-                                                                                           data[self.MODELO_ID])
-                anos_disponiveis = [a.to_dict() for a in anos_disponiveis]
-                anos_disponiveis = pd.DataFrame(anos_disponiveis)
+            data = {self.MARCA_ID: str(row[self.MARCA_ID]),
+                    self.MODELO_ID: str(row[self.MODELO_ID]),
+                    self.MLB: str(row[self.MLB]),
+                    "ano_inicial":ano_inicial,
+                    "ano_final":ano_final,
+                    }
 
-                if not (ano_final and ano_inicial):
-                    anos = anos_disponiveis["id"].values
-                elif ano_final and ano_inicial:
-                    anos = anos_disponiveis[
-                        (anos_disponiveis["name"] >= ano_inicial) & (anos_disponiveis["name"] <= ano_final)][
-                        "id"].values
-                elif ano_inicial and not ano_final:  # Todos a partir do ano inicial
-                    anos = anos_disponiveis[anos_disponiveis["name"] >= ano_inicial]["id"].values
-                else:  # Todos a partir até o ano final
-                    anos = anos_disponiveis[anos_disponiveis["name"] <= ano_final]["id"].values
+            self._await()
 
-            data[self.ANOS] = anos
+            anos_disponiveis = self._catalogo_dominio_controller.get_anos_marca_modelo(data[self.MARCA_ID],
+                                                                                       data[self.MODELO_ID])
+            anos_disponiveis = [a.to_dict() for a in anos_disponiveis]
+            anos_disponiveis = pd.DataFrame(anos_disponiveis)
+            anos_disponiveis["name"] = anos_disponiveis["name"].astype(int)
+
+            if not (ano_final and ano_inicial):
+                anos = anos_disponiveis
+            elif ano_final == ano_inicial:
+                anos = anos_disponiveis.query('name == @ano_final')
+            elif ano_final and ano_inicial:
+                anos = anos_disponiveis.query("name >= @ano_inicial and name <= @ano_final")
+            elif ano_inicial and not ano_final:  # Todos a partir do ano inicial
+                anos = anos_disponiveis.query("name >= @ano_inicial")
+            else:  # Todos a partir até o ano final
+                anos = anos_disponiveis.query("name <= @ano_final")
+
+            data[self.ANOS] = list(map(str, anos["id"].values))
             data_list.append(data)
         return data_list
 
@@ -136,4 +145,4 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
 
             compatibilidades = [compat_marca, compat_modelo, compat_ano]
             # self._await()
-            # self._compatibilidade_controller.post_compatibilidade_por_dominio(data[self.MLB], compatibilidades)
+            yield data[self.MLB], self._compatibilidade_controller.post_compatibilidade_por_dominio(data[self.MLB], compatibilidades)

@@ -95,6 +95,7 @@ class Ui_FrmInserirCompatibilidadesMeli(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.txtLogs.sizePolicy().hasHeightForWidth())
         self.txtLogs.setSizePolicy(sizePolicy)
+        self.txtLogs.setMinimumSize(QtCore.QSize(0, 120))
         self.txtLogs.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.txtLogs.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
         self.txtLogs.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.SizeAdjustPolicy.AdjustToContents)

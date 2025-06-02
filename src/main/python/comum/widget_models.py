@@ -1,6 +1,3 @@
-from itertools import count
-from typing import Iterable
-
 import pandas as pd
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 
@@ -9,7 +6,7 @@ from PyQt6.QtGui import QStandardItemModel, QStandardItem
 """
 
 
-class DataframeModel(QStandardItemModel):
+class TableDataframeModel(QStandardItemModel):
     def __init__(self, df = None):
         super().__init__()
         self._df = None

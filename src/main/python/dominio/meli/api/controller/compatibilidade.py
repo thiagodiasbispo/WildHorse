@@ -17,17 +17,18 @@ class CompatibilidadeController(SystemBaseControllerAutenticated):
 
     def __init__(self, base_url, token):
         super().__init__(token)
-        self._base_url = f"{base_url}/tems/{0}/compatibilities"
+        self._base_url = f"{base_url}/items/" + "{mlb}/compatibilities"
 
     @converter_resultado(ResultadoCompatibilidadePorDominioFamiliaProdutoPost)
     def post_compatibilidade_por_dominio(self, mlb: str,
                                          compatibilidades: list[
                                              CompatibilidadeAtributoCarroVariosPost | CompatibilidadeAtributoCarroVariosPost]) -> ResultadoCompatibilidadePorDominioFamiliaProdutoPost:
         comp = CompatibilidadePorDominioFamiliaProdutoPost(domain_id=self.DOMAIN_MLB_CARS_AND_VAN,
-                                                           atrributes=compatibilidades)
+                                                           attributes=compatibilidades)
         encoder = pydantic_custom_encoder(by_alias=True, exclude_none=True)
 
         data = {
-            "products_families": [{encoder(comp)}]
+            "products_families": [encoder(comp)]
         }
-        return self.post(self._base_url.format(mlb), data=data)
+        print(data)
+        return self.post(self._base_url.format(mlb=mlb), data=json.dumps(data))

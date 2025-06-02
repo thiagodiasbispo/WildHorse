@@ -10,7 +10,7 @@ from comum.configuracoes.configuracao_meli_service import (
     ConfiguracoesAPIMeli,
     atualizar_configuracoes_api_meli,
 )
-from comum.widgets import mostrar_mensagem_sucesso, mostrar_mensagem_erro
+from comum.widget_utils import mostrar_mensagem_sucesso, mostrar_mensagem_erro
 from dominio.meli.api.controller_factory import MeliApiControllerFactory
 
 from dominio.meli.api.autenticacao_utils import orquestrar_obtencao_token
