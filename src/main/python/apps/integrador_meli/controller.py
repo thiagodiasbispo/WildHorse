@@ -12,15 +12,16 @@ from dominio.meli.api.models import CompatibilidadeAtributoCarroPost, Compatibil
 def _ano_informado(ano):
     return not np.isnan(ano)
 
+
 class InserirCompatibilidadeController(RequisitionAwaiter):
-    MARCA = "marca"
-    MARCA_ID = "marca_id"
-    MODELO = "modelo"
-    MODELO_ID = "modelo_id"
-    ANO_INICIAL = "ano_inicial"
-    ANO_FINAL = "ano_final"
-    ANOS = "anos"
-    MLB = "mlb"
+    MARCA = "Marca"
+    MARCA_ID = "Marca ID"
+    MODELO = "Modelo"
+    MODELO_ID = "Modelo ID"
+    ANO_INICIAL = "Ano Inicial"
+    ANO_FINAL = "Ano Final"
+    ANOS = "Anos"
+    MLB = "MLB"
 
     def __init__(self):
         RequisitionAwaiter.__init__(self)
@@ -79,8 +80,9 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
     def ler_planilha_compatibilidade(self, planilha_compatibilidade):
         df = pd.read_excel(planilha_compatibilidade)
         for ano in [self.ANO_INICIAL, self.ANO_FINAL]:
-                df[ano] = df[ano].fillna('')
+            df[ano] = df[ano].fillna('')
         return df
+
     def expandir_planilha_compatibilidade(self, df_compat, df_associacao) -> list[dict]:
         df = self.get_ids_meli_correspondentes(df_compat, df_associacao)
         data_list = []
@@ -92,10 +94,12 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
             ano_final = ano_final if _ano_informado(ano_final) else ""
 
             data = {self.MARCA_ID: str(row[self.MARCA_ID]),
+                    self.MARCA: str(row[self.MARCA]),
+                    self.MODELO: str(row[self.MODELO]),
                     self.MODELO_ID: str(row[self.MODELO_ID]),
                     self.MLB: str(row[self.MLB]),
-                    "ano_inicial":ano_inicial,
-                    "ano_final":ano_final,
+                    "ano_inicial": ano_inicial,
+                    "ano_final": ano_final,
                     }
 
             self._await()
@@ -105,8 +109,6 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
             anos_disponiveis = [a.to_dict() for a in anos_disponiveis]
             anos_disponiveis = pd.DataFrame(anos_disponiveis)
             anos_disponiveis["name"] = anos_disponiveis["name"].astype(int)
-
-
 
             if not ano_inicial and not ano_final:
                 anos = anos_disponiveis
@@ -142,16 +144,22 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
         data_list = self.expandir_planilha_compatibilidade(df_compat, df_associacao)
 
         for data in data_list:
-            print(data)
-            compat_marca = CompatibilidadeAtributoCarroPost(id=self._compatibilidade_controller.MARCA,
-                                                            value_id=data[self.MARCA_ID])
+            descricao = f"{data[self.MLB]} ({data[self.MARCA]} {data[self.MODELO]})"
 
-            compat_modelo = CompatibilidadeAtributoCarroPost(id=self._compatibilidade_controller.MODELO,
-                                                             value_id=data[self.MODELO_ID])
+            try:
+                compat_marca = CompatibilidadeAtributoCarroPost(id=self._compatibilidade_controller.MARCA,
+                                                                value_id=data[self.MARCA_ID])
 
-            compat_ano = CompatibilidadeAtributoCarroVariosPost(id=self._compatibilidade_controller.ANO,
-                                                                value_ids=data[self.ANOS])
+                compat_modelo = CompatibilidadeAtributoCarroPost(id=self._compatibilidade_controller.MODELO,
+                                                                 value_id=data[self.MODELO_ID])
 
-            compatibilidades = [compat_marca, compat_modelo, compat_ano]
-            # self._await()
-            yield data[self.MLB], self._compatibilidade_controller.post_compatibilidade_por_dominio(data[self.MLB], compatibilidades)
+                compat_ano = CompatibilidadeAtributoCarroVariosPost(id=self._compatibilidade_controller.ANO,
+                                                                    value_ids=data[self.ANOS])
+
+                compatibilidades = [compat_marca, compat_modelo, compat_ano]
+
+                result = self._compatibilidade_controller.post_compatibilidade_por_dominio(data[self.MLB],
+                                                                                           compatibilidades)
+                yield True, descricao, result, ""
+            except Exception as e:
+                yield True, descricao, None, str(e)

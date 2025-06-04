@@ -7,15 +7,20 @@ import pandas as pd
 from PyQt6.QtWidgets import QWidget
 
 from apps.integrador_meli.gui.ui.frm_gerar_associacao_atributos_automovel import Ui_frmGeradorAssociadoMarcaModeloAno
-from apps.integrador_meli.gui.widget.models import AssociacaoAtributosAutomovelModel
 from apps.integrador_meli.models import AssociacaoAtributosAutomovel
 from comum.assincrono import ExecutorAssincronaDeFuncaoGeradora
-from comum.configuracoes.configuracao_meli_service import ler_configuracoes_api_meli
+from comum.widget_models import ItemModelObjectAttributeBased
 from comum.widget_utils import escolher_diretorio, mostrar_mensagem_erro
 from dominio.meli.api.autenticacao_utils import usuario_esta_autenticado
 from dominio.meli.api.controller.catalogo_de_dominio import CatalogoDeDominioController
-from dominio.meli.api.controller_factory import MeliApiControllerFactory
-from wild_horse.gui.widget.frm_barra_progresso import FrmBarraProgressoWindow
+from dominio.meli.api.controller_factory import get_factory
+from wild_horse.gui.widget.frm_barra_progresso_para_operacao_assincrona import FrmBarraProgressoParaExecucaoAssincrona
+
+
+class AssociacaoAtributosAutomovelModel(ItemModelObjectAttributeBased):
+    def __init__(self):
+        atributos = {"marca": "Marca", "marca_id": "Marca ID", "modelo": "Modelo", "modelo_id": "Modelo ID"}
+        super().__init__(atributos)
 
 
 class FrmGerarAssociacaoAtributosAutomovel(QWidget):
@@ -23,10 +28,13 @@ class FrmGerarAssociacaoAtributosAutomovel(QWidget):
         super(FrmGerarAssociacaoAtributosAutomovel, self).__init__(*args, **kwargs)
         self.ui = Ui_frmGeradorAssociadoMarcaModeloAno()
         self.ui.setupUi(self)
+
         self.ui.btnInformarDiretorio.clicked.connect(self._informar_diretorio_destino)
         self.ui.btnGerarAssociacoes.clicked.connect(self._gerar_associacoes)
 
         self.ui.tblAssociacoes.setModel(AssociacaoAtributosAutomovelModel())
+
+        self._catalogo_controller = self._get_catalogo_controller()
 
     @property
     def _arquivo_destino(self):
@@ -37,14 +45,36 @@ class FrmGerarAssociacaoAtributosAutomovel(QWidget):
         self.ui.tblAssociacoes.resizeColumnsToContents()
 
     def _get_catalogo_controller(self) -> CatalogoDeDominioController:
-        config = ler_configuracoes_api_meli()
-        return MeliApiControllerFactory(config).catalogo_dominio_controller
+        return get_factory().catalogo_dominio_controller
+
+    def _criar_listador_associacoes(self):
+        def listar():
+            batch_size = 150
+            batch = []
+            for marca in self._catalogo_controller.get_marcas():
+                for modelo in self._catalogo_controller.get_modelos_marca(marca.id):
+                    batch.append(AssociacaoAtributosAutomovel(marca=marca.name,
+                                                              marca_id=marca.id,
+                                                              modelo=modelo.name,
+                                                              modelo_id=modelo.id))
+                    if len(batch) == batch_size:
+                        yield batch
+                        batch = []
+            if batch:
+                yield batch
+
+        gerador_anuncios = ExecutorAssincronaDeFuncaoGeradora(listar, parent=self)
+        gerador_anuncios.erro_no_carregamento.connect(self._erro_no_carregamento)
+        gerador_anuncios.carregamento_finalizado.connect(self._carregamento_finalizado)
+
+        return gerador_anuncios
+
+    def _criar_barra_progresso_de_carregamento_de_anuncio(self, litador_associacoes):
+        return FrmBarraProgressoParaExecucaoAssincrona(litador_associacoes, parent=self,
+                                                       mensagem="Listando associações")
 
     def _gerar_associacoes(self):
         try:
-            catalogo_controller = self._get_catalogo_controller()
-            self.ui.tblAssociacoes.model().clear()
-
             if not usuario_esta_autenticado():
                 mostrar_mensagem_erro(
                     self,
@@ -53,34 +83,13 @@ class FrmGerarAssociacaoAtributosAutomovel(QWidget):
                 )
                 return
 
-            def get_associacoes():
-                batch_size = 150
-                batch = []
-                for marca in catalogo_controller.get_marcas():
-                    for modelo in catalogo_controller.get_modelos_marca(marca.id):
-                        batch.append(AssociacaoAtributosAutomovel(marca=marca.name,
-                                                                  marca_id=marca.id,
-                                                                  modelo=modelo.name,
-                                                                  modelo_id=modelo.id))
-                        if len(batch) == batch_size:
-                            yield batch
-                            batch = []
-                if batch:
-                    yield batch
+            self.ui.tblAssociacoes.model().clear()
+            listador_associacoes = self._criar_listador_associacoes()
+            frm_barra_progresso = self._criar_barra_progresso_de_carregamento_de_anuncio(listador_associacoes)
 
-            self._iniciar_carregamento_assincrono(
-                mensagem="Carregando atributos",
-                funcao_geradora=get_associacoes,
-                callback_novos_dados_carregados=self._novas_associacoes_carregadas,
-            )
+            frm_barra_progresso.iniciar_carregamento_assincrono(
+                callback_novos_dados_carregados=self._novas_associacoes_carregadas)
 
-            self.frm_barra_progresso.accepted.connect(
-                self._carregamento_finalizado
-            )
-
-            self.frm_barra_progresso.rejected.connect(
-                self._carregamento_finalizado
-            )
         except Exception as e:
             mostrar_mensagem_erro(self, mensagem=f"Erro baixar associações: {e}")
             traceback.print_exc()
@@ -99,9 +108,9 @@ class FrmGerarAssociacaoAtributosAutomovel(QWidget):
 
     def _exportar_associacoes(self):
         try:
-            associacoes = self.ui.tblAssociacoes.model().get_data()
-            associacoes_dict = [a.to_dict() for a in associacoes]
-            pd.DataFrame(associacoes_dict).to_excel(self._arquivo_destino, index=False)
+            itens = self.ui.tblAssociacoes.model().get_itens()
+            df = pd.DataFrame(itens)
+            df.to_excel(self._arquivo_destino, index=False)
             self._log_info(f"Associações exportadas para: {self._arquivo_destino}")
         except Exception as e:
             self._log_error(f"Erro ao exportar associações: {e}")
@@ -116,44 +125,10 @@ class FrmGerarAssociacaoAtributosAutomovel(QWidget):
         self.ui.tblAssociacoes.resizeColumnsToContents()
 
     def _erro_no_carregamento(self, mensagem: str):
+        print(mensagem)
         mostrar_mensagem_erro(
             self, titulo="Erro na geração das associações!", mensagem=mensagem
         )
-
-    def _iniciar_carregamento_assincrono(self, mensagem, funcao_geradora, callback_novos_dados_carregados=None):
-        self.frm_barra_progresso = FrmBarraProgressoWindow(self)
-        self.frm_barra_progresso.set_mensagem(mensagem)
-
-        self._gerador_assincrono_atributos = ExecutorAssincronaDeFuncaoGeradora(
-            funcao_geradora
-        )
-
-        self.frm_barra_progresso.rejected.connect(
-            self._gerador_assincrono_atributos.requestInterruption
-        )
-
-        self._gerador_assincrono_atributos.erro_no_carregamento.connect(
-            self.frm_barra_progresso.close
-        )
-
-        self._gerador_assincrono_atributos.finished.connect(
-            self.frm_barra_progresso.close
-        )
-
-        if callback_novos_dados_carregados:
-            self._gerador_assincrono_atributos.novos_dados_carregados.connect(
-                callback_novos_dados_carregados
-            )
-
-        self._gerador_assincrono_atributos.novos_dados_carregados.connect(
-            lambda _: self.frm_barra_progresso.incremento(10)
-        )
-        self._gerador_assincrono_atributos.erro_no_carregamento.connect(
-            self._erro_no_carregamento
-        )
-
-        self.frm_barra_progresso.open()
-        self._gerador_assincrono_atributos.start()
 
     @staticmethod
     def _get_nome_arquivo():
@@ -169,4 +144,3 @@ class FrmGerarAssociacaoAtributosAutomovel(QWidget):
             self.ui.edtDiretorioDestino.clear()
 
         self.ui.btnGerarAssociacoes.setEnabled(bool(diretorio))
-

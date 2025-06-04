@@ -22,7 +22,6 @@ class CatalogoDeDominioController(SystemBaseControllerAutenticated):
     def get_modelos_marca(self, id_marca: str):
         url = f"{self._base_url_atributos}/MODEL/top_values"
         data = {"known_attributes": [{"id": "BRAND", "value_id": str(id_marca)}]}
-        print(data)
         return self.post(url, data=json.dumps(data))
 
     @converter_resultado(AnoGet)

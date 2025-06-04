@@ -53,6 +53,11 @@ def mostrar_mensagem_erro(parent, mensagem, titulo="Erro!"):
     return msg_box.critical(msg_box, titulo, mensagem)
 
 
+def mostrar_mensagem_erro_usuario_nao_autenticado(parent):
+    return mostrar_mensagem_erro(parent, titulo="Erro de autenticação",
+                          mensagem="Você não está autenticado! Autentique-se na tela de Configurações da Mercado Livre.")
+
+
 def mostrar_mensagem_warning(parent, mensagem, titulo="Aviso!"):
     msg_box = get_message_box_padrao(parent)
     return msg_box.warning(msg_box, titulo, mensagem)

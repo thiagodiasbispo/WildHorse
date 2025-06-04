@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icones">
+    <file>icones/insert.png</file>
     <file>icones/atributos.png</file>
     <file>icones/anuncio.png</file>
     <file>icones/compatibilidade.png</file>

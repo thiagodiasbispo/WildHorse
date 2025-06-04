@@ -138,6 +138,10 @@ QWidget{
           <property name="text">
            <string>Inserir compatiblidades</string>
           </property>
+          <property name="icon">
+           <iconset resource="../../../../resources.qrc">
+            <normaloff>:/icones/icones/insert.png</normaloff>:/icones/icones/insert.png</iconset>
+          </property>
          </widget>
         </item>
        </layout>

@@ -99,6 +99,10 @@
           <property name="text">
            <string>Gerar associações</string>
           </property>
+          <property name="icon">
+           <iconset resource="../../../../resources.qrc">
+            <normaloff>:/icones/icones/excel.png</normaloff>:/icones/icones/excel.png</iconset>
+          </property>
          </widget>
         </item>
        </layout>

@@ -24,8 +24,9 @@ class TableDataframeModel(QStandardItemModel):
         self._df = None
 
     def _insert_columns(self):
-        for i, column in enumerate(self._df.columns):
-            self.setHorizontalHeaderItem(i, QStandardItem(column))
+        if self._df is not None:
+            for i, column in enumerate(self._df.columns):
+                self.setHorizontalHeaderItem(i, QStandardItem(column))
 
     def rowCount(self, parent=...):
         if self._df is None:
@@ -70,7 +71,7 @@ class ItemModelObjectAttributeBased(QStandardItemModel):
 
     def _get_valor(self, atributo, item):
         valor = getattr(item, atributo)
-        if atributo in self._fomatador_atributo:
+        if self._fomatador_atributo and atributo in self._fomatador_atributo:
             valor = self._fomatador_atributo[atributo](valor)
         return valor
 
