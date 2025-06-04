@@ -1,6 +1,7 @@
 from comum.configuracoes.configuracao_meli_service import (
-    ConfiguracoesAPIMeli,
+    ConfiguracoesAPIMeli
 )
+from dominio.meli.api.controller.anuncio import AnuncioController
 from dominio.meli.api.controller.autenticacao import AutenticacaoController
 from dominio.meli.api.controller.catalogo_de_dominio import CatalogoDeDominioController
 from dominio.meli.api.controller.compatibilidade import CompatibilidadeController
@@ -11,7 +12,17 @@ class MeliApiControllerFactory:
         self._compatibilidade = None
         self._catalogo_dominio = None
         self._autenticacao = None
+        self._anuncio = None
         self._config = config
+
+    @property
+    def anuncio_controller(self) -> AnuncioController:
+        if self._anuncio is None:
+            self._anuncio = AnuncioController(
+                base_url=self._config.url_base,
+                token=self._config.ultimo_token,
+            )
+        return self._anuncio
 
     @property
     def catalogo_dominio_controller(self) -> CatalogoDeDominioController:
@@ -42,3 +53,11 @@ class MeliApiControllerFactory:
                 redirect_uri=self._config.redirect_uri
             )
         return self._autenticacao
+
+
+def get_factory() -> MeliApiControllerFactory:
+    from comum.configuracoes.configuracao_meli_service import (
+        ler_configuracoes_api_meli
+    )
+    config = ler_configuracoes_api_meli()
+    return MeliApiControllerFactory(config)

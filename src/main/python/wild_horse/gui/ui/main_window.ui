@@ -64,8 +64,8 @@ QPushButton:hover
           <widget class="QLabel" name="label">
            <property name="maximumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>50</width>
+             <height>50</height>
             </size>
            </property>
            <property name="font">
@@ -427,6 +427,9 @@ QPushButton:hover
     </item>
     <item>
      <widget class="QWidget" name="widget_central" native="true">
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(255, 255, 255);</string>
       </property>
@@ -434,7 +437,7 @@ QPushButton:hover
        <item>
         <widget class="QFrame" name="frameCentralNomeSistema">
          <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
+          <enum>QFrame::Box</enum>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
@@ -492,7 +495,6 @@ QPushButton:hover
  </widget>
  <resources>
   <include location="../../../resources.qrc"/>
-  <include location="C:/Users/resources.qrc"/>
  </resources>
  <connections>
   <connection>

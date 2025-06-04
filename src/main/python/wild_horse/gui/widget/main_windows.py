@@ -1,7 +1,9 @@
 from typing import Type
 
+from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QMainWindow, QWidget, QMenu
 from fbs_runtime.application_context.PyQt6 import ApplicationContext
+
 
 from wild_horse.gui.ui.main_window import Ui_MainWindow
 from wild_horse.gui.widget.frm_sobre import FrmSobre
@@ -30,19 +32,31 @@ class MainWindows(QMainWindow):
     def _add_opcoes_mercado_livre(self):
         menu = QMenu(self)
         menu.addAction(
-            # QIcon(":/icon/gui/icons/anarede.ico"),
+            QIcon(":/icones/icones/compatibilidade.png"),
             "Inserir compatibilidades",
             self._abrir_tela_inserir_compatibilidade,
         )
 
         menu.addAction(
-            # QIcon(":/icon/gui/icons/anarede.ico"),
+            QIcon(":/icones/icones/anuncio.png"),
+            "Exportar anúncios para compatibilidades",
+            self._abrir_tela_exportacao_anuncios,
+        )
+
+        menu.addAction(
+            QIcon(":/icones/icones/atributos.png"),
             "Associar atributos de automóvel",
             self._abrir_tela_associacao_atributos,
         )
 
         self.ui.btnMeliComTexto.setMenu(menu)
         self.ui.btnMeliSemTexto.setMenu(menu)
+
+    def _abrir_tela_exportacao_anuncios(self):
+        from apps.integrador_meli.gui.widget.frm_exportar_anuncios_para_compatibilidade import \
+            FrmExportarAnunciosParaCompatibilidade
+
+        self._abrir_tela(FrmExportarAnunciosParaCompatibilidade)
 
     def _abrir_tela_associacao_atributos(self):
         from apps.integrador_meli.gui.widget.frm_gerar_associacao_atributos_automovel import \

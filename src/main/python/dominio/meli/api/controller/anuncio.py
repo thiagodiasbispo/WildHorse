@@ -1,14 +1,11 @@
-import os
-
-from models.compatibilidade_produto_model import CompatibilidadeProdutoModel
-from models.produtos_anunciados_model import ProdutosAnunciadosModel
-from services.mercadolivre_service import MercadoLivreService
-from utils.export_utils import exportar_produtos_para_excel
+from dominio.meli.api.controller.comum import SystemBaseControllerAutenticated
+from dominio.meli.api.models import ProdutosAnunciadosModel
 
 
-class ProdutosAnunciadosController:
-    def __init__(self):
-        self.service = MercadoLivreService()
+class AnuncioController(SystemBaseControllerAutenticated):
+    def __init__(self, base_url, token):
+        super().__init__(token)
+        self._base_url = base_url #f"{base_url}/users/2280689507/items/search?search_type=scan"
 
     def _get_sku(self, item_info: dict):
         for atributo in item_info["attributes"]:
@@ -16,21 +13,20 @@ class ProdutosAnunciadosController:
                 return atributo["value_name"]
         return None
 
-    def get_produtos(self):
-        user_id = os.getenv('USER_ID')
-        produtos = []
+    def get_produtos_anunciados_com_informacoes_de_compatabilidade(self):
+        # produtos = []
         scroll_id = None
         first_request = True
         limit = 20
 
         while True:
             if first_request:
-                endpoint = f"/users/{user_id}/items/search?search_type=scan"
+                endpoint = f"{self._base_url}/users/2280689507/items/search?search_type=scan"
                 first_request = False
             else:
-                endpoint = f"/users/{user_id}/items/search?search_type=scan&scroll_id={scroll_id}"
+                endpoint = f"{self._base_url}/users/2280689507/items/search?search_type=scan&scroll_id={scroll_id}"
 
-            produtos_data = self.service.get(endpoint)
+            produtos_data = self.get(endpoint)
             all_items_ids = produtos_data.get("results", [])
             scroll_id = produtos_data.get("scroll_id", None)
 
@@ -42,7 +38,7 @@ class ProdutosAnunciadosController:
             for items_id in item_ids_group:
                 items_id_str = map(str, items_id)
                 items_id_str = ",".join(items_id_str)
-                items_info = self.service.get(f"/items?ids={items_id_str}")
+                items_info = self.get(f"{self._base_url}/items?ids={items_id_str}")
 
                 for item_info in items_info:
                     item_info = item_info["body"]
@@ -54,19 +50,10 @@ class ProdutosAnunciadosController:
                         requer_compatibilidade="incomplete_compatibilities" in tags,
                         tem_sugestao_compabilidade="pending_compatibilities" in tags,
                     )
-                    produtos.append(produto)
+                    yield produto
+                    # produtos.append(produto)
 
             if not scroll_id:
                 break
 
-        return produtos
-
-    def exportar_para_excel(self, produtos):
-        exportar_produtos_para_excel(produtos)
-
-    def put_compatibilidades(self, compatibilidades: list[CompatibilidadeProdutoModel]):
-        for compat in compatibilidades:
-            self.service.post(
-                f"/items/{compat.item_id}/compatible_products",
-                json=compat.model_dump()
-            )
+        # return produtos

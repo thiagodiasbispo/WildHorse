@@ -3,7 +3,6 @@ import traceback
 from datetime import datetime
 from pathlib import Path
 
-import pandas as pd
 from PyQt6.QtWidgets import QWidget
 
 from apps.integrador_meli.controller import InserirCompatibilidadeController
@@ -21,11 +20,10 @@ class FrmInserirCompatibilidadeMeli(QWidget):
         self.ui.btnAbrirPlanilhaCompatibilidade.clicked.connect(self._abrir_planilha_compatibilidade)
         self.ui.btnPlanilhaMarcaModelosAnos.clicked.connect(self._abrir_panilha_marca_modelo_ano)
         self.ui.btnInserirCompatibilidades.clicked.connect(self._inserir_compatibilidades)
-
         self._compatibilidade_controller = InserirCompatibilidadeController()
 
     def _log_info(self, mensagem):
-        mensagem = f"<font color='blue'>{mensagem}</font>"
+        mensagem = f"<font color='white'>{mensagem}</font>"
         self._log_html(mensagem)
 
     def _log_error(self, mensagem):

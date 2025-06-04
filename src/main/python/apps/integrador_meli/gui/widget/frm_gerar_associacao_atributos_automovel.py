@@ -4,37 +4,18 @@ from datetime import date, datetime
 from pathlib import Path
 
 import pandas as pd
-from PyQt6.QtCore import QThread, pyqtSignal
 from PyQt6.QtWidgets import QWidget
 
 from apps.integrador_meli.gui.ui.frm_gerar_associacao_atributos_automovel import Ui_frmGeradorAssociadoMarcaModeloAno
 from apps.integrador_meli.gui.widget.models import AssociacaoAtributosAutomovelModel
 from apps.integrador_meli.models import AssociacaoAtributosAutomovel
+from comum.assincrono import ExecutorAssincronaDeFuncaoGeradora
 from comum.configuracoes.configuracao_meli_service import ler_configuracoes_api_meli
 from comum.widget_utils import escolher_diretorio, mostrar_mensagem_erro
 from dominio.meli.api.autenticacao_utils import usuario_esta_autenticado
 from dominio.meli.api.controller.catalogo_de_dominio import CatalogoDeDominioController
 from dominio.meli.api.controller_factory import MeliApiControllerFactory
 from wild_horse.gui.widget.frm_barra_progresso import FrmBarraProgressoWindow
-
-
-class GeradorAssincronoDeAtributosDeAutomovel(QThread):
-    novos_dados_carregados = pyqtSignal(object)
-    erro_no_carregamento = pyqtSignal(str)
-
-    def __init__(self, funcao_geradora, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._funcao_geradora = funcao_geradora
-
-    def run(self):
-        try:
-            for data in self._funcao_geradora():
-                if self.isInterruptionRequested():
-                    return
-                self.novos_dados_carregados.emit(data)
-        except Exception as e:
-            self.erro_no_carregamento.emit(str(e))
-            traceback.print_exc()
 
 
 class FrmGerarAssociacaoAtributosAutomovel(QWidget):
@@ -89,8 +70,8 @@ class FrmGerarAssociacaoAtributosAutomovel(QWidget):
 
             self._iniciar_carregamento_assincrono(
                 mensagem="Carregando atributos",
-                funcao=get_associacoes,
-                callback=self._novas_associacoes_carregadas,
+                funcao_geradora=get_associacoes,
+                callback_novos_dados_carregados=self._novas_associacoes_carregadas,
             )
 
             self.frm_barra_progresso.accepted.connect(
@@ -139,12 +120,12 @@ class FrmGerarAssociacaoAtributosAutomovel(QWidget):
             self, titulo="Erro na geração das associações!", mensagem=mensagem
         )
 
-    def _iniciar_carregamento_assincrono(self, mensagem, funcao, callback=None):
+    def _iniciar_carregamento_assincrono(self, mensagem, funcao_geradora, callback_novos_dados_carregados=None):
         self.frm_barra_progresso = FrmBarraProgressoWindow(self)
         self.frm_barra_progresso.set_mensagem(mensagem)
 
-        self._gerador_assincrono_atributos = GeradorAssincronoDeAtributosDeAutomovel(
-            funcao
+        self._gerador_assincrono_atributos = ExecutorAssincronaDeFuncaoGeradora(
+            funcao_geradora
         )
 
         self.frm_barra_progresso.rejected.connect(
@@ -159,9 +140,9 @@ class FrmGerarAssociacaoAtributosAutomovel(QWidget):
             self.frm_barra_progresso.close
         )
 
-        if callback:
+        if callback_novos_dados_carregados:
             self._gerador_assincrono_atributos.novos_dados_carregados.connect(
-                callback
+                callback_novos_dados_carregados
             )
 
         self._gerador_assincrono_atributos.novos_dados_carregados.connect(
@@ -176,7 +157,7 @@ class FrmGerarAssociacaoAtributosAutomovel(QWidget):
 
     @staticmethod
     def _get_nome_arquivo():
-        data = date.today().strftime("%d%m%Y")
+        data = date.today().strftime("%d.%m.%Y")
         return f"atributos_automovel_{data}.xlsx"
 
     def _informar_diretorio_destino(self):
@@ -188,3 +169,4 @@ class FrmGerarAssociacaoAtributosAutomovel(QWidget):
             self.ui.edtDiretorioDestino.clear()
 
         self.ui.btnGerarAssociacoes.setEnabled(bool(diretorio))
+

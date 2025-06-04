@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from comum.configuracoes.configuracao_meli_service import ler_configuracoes_api_meli
@@ -7,6 +8,9 @@ from dominio.meli.api.controller.comum import RequisitionAwaiter
 from dominio.meli.api.controller_factory import MeliApiControllerFactory
 from dominio.meli.api.models import CompatibilidadeAtributoCarroPost, CompatibilidadeAtributoCarroVariosPost
 
+
+def _ano_informado(ano):
+    return not np.isnan(ano)
 
 class InserirCompatibilidadeController(RequisitionAwaiter):
     MARCA = "marca"
@@ -81,8 +85,11 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
         df = self.get_ids_meli_correspondentes(df_compat, df_associacao)
         data_list = []
         for _, row in df.iterrows():
-            ano_inicial = row[self.ANO_INICIAL] or None
-            ano_final = row[self.ANO_FINAL] or None
+            ano_inicial = row[self.ANO_INICIAL]
+            ano_final = row[self.ANO_FINAL]
+
+            ano_inicial = ano_inicial if _ano_informado(ano_inicial) else ""
+            ano_final = ano_final if _ano_informado(ano_final) else ""
 
             data = {self.MARCA_ID: str(row[self.MARCA_ID]),
                     self.MODELO_ID: str(row[self.MODELO_ID]),
@@ -99,7 +106,9 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
             anos_disponiveis = pd.DataFrame(anos_disponiveis)
             anos_disponiveis["name"] = anos_disponiveis["name"].astype(int)
 
-            if not (ano_final and ano_inicial):
+
+
+            if not ano_inicial and not ano_final:
                 anos = anos_disponiveis
             elif ano_final == ano_inicial:
                 anos = anos_disponiveis.query('name == @ano_final')

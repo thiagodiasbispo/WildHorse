@@ -32,8 +32,8 @@ if not is_frozen():
 
 if __name__ == "__main__":
     appctxt = ApplicationContext()  # 1. Instantiate ApplicationContext
-    # palette = qdarktheme.load_palette(theme="light")
-    appctxt.app.setStyleSheet(qdarktheme.load_stylesheet("dark"))
+    palette = qdarktheme.load_palette(theme="light")
+    # appctxt.app.setStyleSheet(qdarktheme.load_stylesheet("dark"))
   # Set dark theme
     if is_frozen():
         carga_inicial_se_primeira_execucao(

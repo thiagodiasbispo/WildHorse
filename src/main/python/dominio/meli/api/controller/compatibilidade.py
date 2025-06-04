@@ -1,5 +1,4 @@
 import json
-from collections.abc import Iterable
 
 from dominio.meli.api.controller.comum import (
     converter_resultado,
@@ -10,7 +9,7 @@ from dominio.meli.api.models import CompatibilidadeAtributoCarroVariosPost, \
 
 
 class CompatibilidadeController(SystemBaseControllerAutenticated):
-    DOMAIN_MLB_CARS_AND_VAN = "MLB-CARS_AND_VAN"
+    DOMAIN_MLB_CARS_AND_VAN = "MLB-CARS_AND_VANS"
     MARCA = "BRAND"
     MODELO = "MODEL"
     ANO = "VEHICLE_YEAR"
