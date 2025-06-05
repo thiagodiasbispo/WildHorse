@@ -70,8 +70,6 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
         df_compat[self.MARCA_ID] = df_compat[self.MARCA].map(marca_map)
         df_compat[self.MODELO_ID] = df_compat[self.MODELO].map(modelo_map)
 
-        df_compat.to_excel(r"G:\Meu Drive\Freelas\Carlos_WildHorse\merge.xlsx")
-
         assert len(df_compat) == len(
             df_compat), "Erro ao obter IDs correspondentes. Verifique as planilhas de compatibilidade e associação."
 

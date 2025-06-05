@@ -1,3 +1,4 @@
+import datetime
 import sys
 from pathlib import Path
 
@@ -9,6 +10,7 @@ from comum.configuracoes.configuracao_meli_service import (
     carga_inicial_se_primeira_execucao,
     TipoAmbienteDesenvolvimento,
 )
+from comum.widget_utils import mostrar_mensagem_erro
 from wild_horse.gui.widget.main_windows import MainWindows
 
 path = Path(__file__).parent
@@ -32,9 +34,6 @@ if not is_frozen():
 
 if __name__ == "__main__":
     appctxt = ApplicationContext()  # 1. Instantiate ApplicationContext
-    palette = qdarktheme.load_palette(theme="light")
-    # appctxt.app.setStyleSheet(qdarktheme.load_stylesheet("dark"))
-  # Set dark theme
     if is_frozen():
         carga_inicial_se_primeira_execucao(
             appctxt, TipoAmbienteDesenvolvimento.PRODUCAO
@@ -43,6 +42,10 @@ if __name__ == "__main__":
         carga_inicial_se_primeira_execucao(
             appctxt, TipoAmbienteDesenvolvimento.HOMOLOGACAO
         )
+    if datetime.date.today() > datetime.date(2025, 6, 9):
+        mostrar_mensagem_erro("Esta é uma versão DEMO e sua data de validade expirou em 09/06/2025. ")
+        sys.exit(0)
+    appctxt.app.setStyleSheet(qdarktheme.load_stylesheet("light"))
     window = MainWindows(appctxt)
     window.show()
     exit_code = appctxt.app.exec()  # 2. Invoke appctxt.app.exec()
