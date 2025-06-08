@@ -9,7 +9,8 @@ from apps.integrador_meli.controller import InserirCompatibilidadeController
 from apps.integrador_meli.gui.ui.frm_inserir_compatibilidades_meli import Ui_FrmInserirCompatibilidadesMeli
 from comum.assincrono import ExecutorAssincronaDeFuncaoGeradora
 from comum.widget_models import TableDataframeModel
-from comum.widget_utils import escolher_panilha_excel, mostrar_mensagem_erro_usuario_nao_autenticado
+from comum.widget_utils import escolher_panilha_excel, mostrar_mensagem_erro_usuario_nao_autenticado, \
+    mostrar_cursor_espera, restaurar_cursor
 from dominio.meli.api.autenticacao_utils import usuario_esta_autenticado
 from wild_horse.gui.widget.frm_barra_progresso_para_operacao_assincrona import FrmBarraProgressoParaExecucaoAssincrona
 
@@ -21,7 +22,7 @@ class FrmInserirCompatibilidadeMeli(QWidget):
         self.ui.setupUi(self)
 
         self.ui.btnAbrirPlanilhaCompatibilidade.clicked.connect(self._abrir_planilha_compatibilidade)
-        self.ui.btnPlanilhaMarcaModelosAnos.clicked.connect(self._abrir_panilha_marca_modelo_ano)
+        self.ui.btnPlanilhaMarcaModelosAnos.clicked.connect(self._abrir_panilha_associacao_atributos)
         self.ui.btnInserirCompatibilidades.clicked.connect(self._inserir_compatibilidades)
         self._compatibilidade_controller = InserirCompatibilidadeController()
 
@@ -42,8 +43,11 @@ class FrmInserirCompatibilidadeMeli(QWidget):
     def _nova_compatibilidade_inserida(self, dados):
         sucesso, descricao, compat_result, mensagem = dados
         if sucesso:
-            self._log_info(
-                f"{descricao}: {compat_result.created_compatibilities_count} compatibilidade(s) inserida(s).")
+            if compat_result:
+                self._log_info(
+                    f"{descricao}: {compat_result.created_compatibilities_count} compatibilidade(s) inserida(s).")
+            else:
+                self._log_info(f"{descricao}")
         else:
             self._log_error(f"{descricao}: Erro {mensagem}")
 
@@ -107,14 +111,23 @@ class FrmInserirCompatibilidadeMeli(QWidget):
         self._habilitar_botao_inserir_compatibilidades()
 
     def _atualizar_tabela_compatibilidades(self):
-        df = self._compatibilidade_controller.ler_planilha_compatibilidade(self.planilha_compatibilidade)
-        if not (model := self.ui.tblCompatibilidades.model()):
-            self.ui.tblCompatibilidades.setModel(TableDataframeModel(df))
-        else:
-            model.set_df(df)
-        self.ui.tblCompatibilidades.resizeColumnsToContents()
+        try:
+            self._log_info("Lendo planilha de compatibilidade...")
+            self.repaint()
+            mostrar_cursor_espera()
+            df = self._compatibilidade_controller.ler_planilha_compatibilidade(self.planilha_compatibilidade)
+            if not (model := self.ui.tblCompatibilidades.model()):
+                self.ui.tblCompatibilidades.setModel(TableDataframeModel(df))
+            else:
+                model.set_df(df)
+            self.ui.tblCompatibilidades.resizeColumnsToContents()
+            self._log_info("Planilha de compatibilidade lida com sucesso!")
+        except Exception as e:
+            self._log_error("Erro ao ler planilha de compatibilidade: " + str(e))
+        finally:
+            restaurar_cursor()
 
-    def _abrir_panilha_marca_modelo_ano(self):
+    def _abrir_panilha_associacao_atributos(self):
         diretorio = os.getenv("USERPROFILE")
 
         if self.planilha_compatibilidade:

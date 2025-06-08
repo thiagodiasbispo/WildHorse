@@ -26,6 +26,10 @@ def escolher_panilha_excel(parent, titulo="Abrir Planilha Excel",
                            directory=os.getenv("USERPROFILE")):
     return escolher_arquivo(parent, filtro="Planilhas Excel (*.xlsx *.xls)", titulo=titulo, directory=directory)
 
+def escolher_panilha_csv(parent, titulo="Abrir Planilha Excel",
+                           directory=os.getenv("USERPROFILE")):
+    return escolher_arquivo(parent, filtro="Planilhas CSV (*.csv *.CSV)", titulo=titulo, directory=directory)
+
 
 def mostrar_cursor_espera():
     QtWidgets.QApplication.setOverrideCursor(

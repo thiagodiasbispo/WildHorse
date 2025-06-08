@@ -9,14 +9,14 @@ import pandas as pd
 from comum.configuracoes.configuracao_meli_service import ler_configuracoes_api_meli
 from dominio.meli.api.controller.comum import RequisitionAwaiter
 from dominio.meli.api.controller_factory import MeliApiControllerFactory
-from dominio.meli.api.models import CompatibilidadeAtributoCarroPost, CompatibilidadeAtributoCarroVariosPost, \
-    ResultadoCompatibilidadePorDominioFamiliaProdutoPost
+from dominio.meli.api.models import CompatibilidadeAtributoCarroPost, CompatibilidadeAtributoCarroVariosPost
 
 
 def _ano_informado(ano):
-    if ano == '':
-        return False
-    return not np.isnan(ano)
+    try:
+        return not np.isnan(ano)
+    except TypeError:
+        return bool(ano)
 
 
 class InserirCompatibilidadeController(RequisitionAwaiter):
@@ -59,7 +59,7 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
                 f"Os anos na planilha {nome_planilha} estão inconsistentes: 'ano_final' deve ser maior ou igual a 'ano_inicial'.")
 
         for ano in [self.ANO_INICIAL, self.ANO_FINAL]:
-            anos_nao_vazios = df[ano][~((df[ano].str.len() == 0) | (df[ano].isnull()))]
+            anos_nao_vazios = df[ano][~df[ano].isna()]
             anos_invalidos = anos_nao_vazios[~anos_nao_vazios.astype(str).str.match(r'^\d{4}$')].unique()
             if anos_invalidos.size > 0:
                 raise ValueError(
@@ -84,9 +84,7 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
 
     def ler_planilha_compatibilidade(self, planilha_compatibilidade):
         print("Lendo planilha de compatibilidade:", planilha_compatibilidade)
-        df = pd.read_excel(planilha_compatibilidade, dtype={self.ANO_INICIAL: str, self.ANO_FINAL: str})
-        for ano in [self.ANO_INICIAL, self.ANO_FINAL]:
-            df[ano] = df[ano].fillna('')
+        df = pd.read_excel(planilha_compatibilidade)
         return df
 
     @functools.lru_cache(maxsize=1024)
@@ -125,12 +123,17 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
                 if not ano_inicial and not ano_final:
                     anos = anos_disponiveis
                 elif ano_final == ano_inicial:
+                    ano_final = int(ano_final)
                     anos = anos_disponiveis.query('name == @ano_final')
                 elif ano_final and ano_inicial:
+                    ano_final = int(ano_final)
+                    ano_inicial = int(ano_inicial)
                     anos = anos_disponiveis.query("name >= @ano_inicial and name <= @ano_final")
                 elif ano_inicial and not ano_final:  # Todos a partir do ano inicial
+                    ano_inicial = int(ano_inicial)
                     anos = anos_disponiveis.query("name >= @ano_inicial")
-                else:  # Todos a partir até o ano final
+                else:  # Todos  até o ano final
+                    ano_final = int(ano_final)
                     anos = anos_disponiveis.query("name <= @ano_final")
 
                 data[self.ANOS] = list(map(str, anos["id"].values))
@@ -145,9 +148,11 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
 
     def inserir_compatibilidade_por_planilha(self, planilha_compatibilidade, planilha_associacao_atributos):
         try:
+            yield True, f"Relendo planilha de compatibilidades", None, ""
             df_compat = self.ler_planilha_compatibilidade(planilha_compatibilidade)
             df_associacao = pd.read_excel(planilha_associacao_atributos)
 
+            yield True, f"Validando valores em colunas", None, ""
             self._validar_planilha_colunas(df_compat, planilha_compatibilidade,
                                            [self.MARCA, self.MODELO, self.ANO_INICIAL,
                                             self.ANO_FINAL, self.MLB])
@@ -161,8 +166,8 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
 
             self._validar_anos_validos(df_compat, planilha_compatibilidade)
 
-            print("VALIDADAS planilhas de compatibilidade e associação de atributos...")
 
+            yield True, f"Associando Ids de marcas e modelos", None, ""
             compatibilidades_expandidas = self.expandir_planilha_compatibilidade(df_compat, df_associacao)
 
         except Exception as e:
@@ -203,6 +208,6 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
                                                                    *compatibilidades)
                 print(f"Inseridas {len(data_list)} compatibilidades:")
                 yield True, descricao, result, ""
-
+                # yield True, f"Inseridas {len(data_list)} compatibilidades:", None, ""
             except Exception as e:
                 yield False, descricao, None, str(e)
