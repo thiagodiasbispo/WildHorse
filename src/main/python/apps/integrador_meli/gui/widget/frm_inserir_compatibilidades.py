@@ -40,9 +40,10 @@ class FrmInserirCompatibilidadeMeli(QWidget):
         self.ui.txtLogs.appendHtml(f"{now} - {mensagem}")
 
     def _nova_compatibilidade_inserida(self, dados):
-        sucesso, descricao, compat_result, mensagem  = dados
+        sucesso, descricao, compat_result, mensagem = dados
         if sucesso:
-            self._log_info(f"{descricao}: {compat_result.created_compatibilities_count} compatibilidade(s) inserida(s).")
+            self._log_info(
+                f"{descricao}: {compat_result.created_compatibilities_count} compatibilidade(s) inserida(s).")
         else:
             self._log_error(f"{descricao}: Erro {mensagem}")
 
@@ -51,6 +52,7 @@ class FrmInserirCompatibilidadeMeli(QWidget):
 
     def _criar_inseridor_compatibilidade(self):
         def inserir():
+            print("Iniciando inserção de compatibilidades...")
             yield from self._compatibilidade_controller.inserir_compatibilidade_por_planilha(
                 self.planilha_compatibilidade, self.planilha_associacao_atributos
             )
@@ -62,7 +64,8 @@ class FrmInserirCompatibilidadeMeli(QWidget):
         return gerador_anuncios
 
     def _criar_barra_progresso_de_insercao_anuncio(self, inseridor_compatibilidade):
-        frm_barra_progresso = FrmBarraProgressoParaExecucaoAssincrona(inseridor_compatibilidade, mensagem="Inserindo compatibilidades")
+        frm_barra_progresso = FrmBarraProgressoParaExecucaoAssincrona(inseridor_compatibilidade, parent=self,
+                                                                      mensagem="Inserindo compatibilidades")
         return frm_barra_progresso
 
     def _erro_no_carregamento(self, mensagem):

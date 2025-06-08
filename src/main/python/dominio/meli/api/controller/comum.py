@@ -190,7 +190,7 @@ class RequisitionAwaiter:
 
         agora = time.time()
         if agora - self.__last_requisition < self.tempo_espera:
-            time.sleep(self.tempo_espera - (agora - self.__last_requisition))
+            time.sleep(self.tempo_espera)
 
         self.__last_requisition = time.time()
 
