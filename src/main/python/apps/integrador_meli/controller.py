@@ -176,7 +176,6 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
             return
 
         for mlb, data_list in compatibilidades_expandidas:
-
             marcas = sorted(set([data[self.MARCA] for data in data_list]))
             modelos = sorted(set([data[self.MODELO] for data in data_list]))
             anos = chain.from_iterable([data[self.ANOS_NOME] for data in data_list])
@@ -191,6 +190,10 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
             compatibilidades = []
 
             for data in data_list:
+                if not data[self.ANOS]:
+                    yield False, descricao, None, f"Erro: Nenhum ano disponível para os atributos e anos desejados."
+                    continue
+
                 compat_marca = CompatibilidadeAtributoCarroPost(id=self._compatibilidade_controller.MARCA,
                                                                 value_id=data[self.MARCA_ID])
 
