@@ -8,6 +8,7 @@ from dominio.meli.api.controller.compatibilidade import CompatibilidadeControlle
 
 
 class MeliApiControllerFactory:
+
     def __init__(self, config: ConfiguracoesAPIMeli):
         self._compatibilidade = None
         self._catalogo_dominio = None

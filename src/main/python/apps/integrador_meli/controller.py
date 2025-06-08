@@ -1,5 +1,6 @@
 import functools
 import traceback
+from itertools import chain
 from pathlib import Path
 
 import numpy as np
@@ -26,6 +27,7 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
     ANO_INICIAL = "Ano Inicial"
     ANO_FINAL = "Ano Final"
     ANOS = "Anos"
+    ANOS_NOME = "Ano Nome"
     MLB = "MLB"
 
     def __init__(self):
@@ -96,46 +98,50 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
         df = self.get_ids_meli_correspondentes(df_compat, df_associacao)
         df = df.sort_values(by=[self.MLB])
 
-        data_list = []
+        for mlb, group in df.groupby(self.MLB):
+            data_list = []
+            for _, row in group.iterrows():
+                ano_inicial = row[self.ANO_INICIAL]
+                ano_final = row[self.ANO_FINAL]
 
-        for _, row in df.iterrows():
-            ano_inicial = row[self.ANO_INICIAL]
-            ano_final = row[self.ANO_FINAL]
+                ano_inicial = ano_inicial if _ano_informado(ano_inicial) else ""
+                ano_final = ano_final if _ano_informado(ano_final) else ""
 
-            ano_inicial = ano_inicial if _ano_informado(ano_inicial) else ""
-            ano_final = ano_final if _ano_informado(ano_final) else ""
+                data = {self.MARCA_ID: str(row[self.MARCA_ID]),
+                        self.MARCA: str(row[self.MARCA]),
+                        self.MODELO: str(row[self.MODELO]),
+                        self.MODELO_ID: str(row[self.MODELO_ID]),
+                        self.MLB: str(row[self.MLB]),
+                        "ano_inicial": ano_inicial,
+                        "ano_final": ano_final,
+                        }
 
-            data = {self.MARCA_ID: str(row[self.MARCA_ID]),
-                    self.MARCA: str(row[self.MARCA]),
-                    self.MODELO: str(row[self.MODELO]),
-                    self.MODELO_ID: str(row[self.MODELO_ID]),
-                    self.MLB: str(row[self.MLB]),
-                    "ano_inicial": ano_inicial,
-                    "ano_final": ano_final,
-                    }
+                anos_disponiveis = self.anos_disponveis(data[self.MARCA_ID], data[self.MODELO_ID])
 
-            anos_disponiveis = self.anos_disponveis(data[self.MARCA_ID], data[self.MODELO_ID])
+                anos_disponiveis = [a.to_dict() for a in anos_disponiveis]
+                anos_disponiveis = pd.DataFrame(anos_disponiveis)
+                anos_disponiveis["name"] = anos_disponiveis["name"].astype(int)
 
-            anos_disponiveis = [a.to_dict() for a in anos_disponiveis]
-            anos_disponiveis = pd.DataFrame(anos_disponiveis)
-            anos_disponiveis["name"] = anos_disponiveis["name"].astype(int)
+                if not ano_inicial and not ano_final:
+                    anos = anos_disponiveis
+                elif ano_final == ano_inicial:
+                    anos = anos_disponiveis.query('name == @ano_final')
+                elif ano_final and ano_inicial:
+                    anos = anos_disponiveis.query("name >= @ano_inicial and name <= @ano_final")
+                elif ano_inicial and not ano_final:  # Todos a partir do ano inicial
+                    anos = anos_disponiveis.query("name >= @ano_inicial")
+                else:  # Todos a partir até o ano final
+                    anos = anos_disponiveis.query("name <= @ano_final")
 
-            if not ano_inicial and not ano_final:
-                anos = anos_disponiveis
-            elif ano_final == ano_inicial:
-                anos = anos_disponiveis.query('name == @ano_final')
-            elif ano_final and ano_inicial:
-                anos = anos_disponiveis.query("name >= @ano_inicial and name <= @ano_final")
-            elif ano_inicial and not ano_final:  # Todos a partir do ano inicial
-                anos = anos_disponiveis.query("name >= @ano_inicial")
-            else:  # Todos a partir até o ano final
-                anos = anos_disponiveis.query("name <= @ano_final")
-
-            data[self.ANOS] = list(map(str, anos["id"].values))
-
-            yield data
-
-        return data_list
+                data[self.ANOS] = list(map(str, anos["id"].values))
+                data[self.ANOS_NOME] = list(map(str, anos["name"].values))
+                data_list.append(data)
+            maximo = self._compatibilidade_controller.QUANTIDADE_MAXIMA_DE_INSERCAO_POR_DOMINIO
+            if len(data_list) <= maximo:
+                yield mlb, data_list
+            else:
+                for i in range(0, len(data_list), maximo):
+                    yield mlb, data_list[i:i + maximo]
 
     def inserir_compatibilidade_por_planilha(self, planilha_compatibilidade, planilha_associacao_atributos):
         try:
@@ -157,17 +163,29 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
 
             print("VALIDADAS planilhas de compatibilidade e associação de atributos...")
 
-            data_list = self.expandir_planilha_compatibilidade(df_compat, df_associacao)
+            compatibilidades_expandidas = self.expandir_planilha_compatibilidade(df_compat, df_associacao)
 
         except Exception as e:
             yield False, None, None, str(e)
             traceback.print_exc()
             return
 
-        for data in data_list:
-            descricao = f"{data[self.MLB]} ({data[self.MARCA]} {data[self.MODELO]})"
+        for mlb, data_list in compatibilidades_expandidas:
 
-            try:
+            marcas = sorted(set([data[self.MARCA] for data in data_list]))
+            modelos = sorted(set([data[self.MODELO] for data in data_list]))
+            anos = chain.from_iterable([data[self.ANOS_NOME] for data in data_list])
+            anos = sorted(set(anos))
+
+            marcas = ', '.join(marcas)
+            modelos = ', '.join(modelos)
+            anos = ', '.join(map(str, anos))
+
+            descricao = f"{mlb} \nMarcas: [{marcas}] \nModelos: [{modelos}] \nAnos: [{anos}]"
+
+            compatibilidades = []
+
+            for data in data_list:
                 compat_marca = CompatibilidadeAtributoCarroPost(id=self._compatibilidade_controller.MARCA,
                                                                 value_id=data[self.MARCA_ID])
 
@@ -177,11 +195,13 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
                 compat_ano = CompatibilidadeAtributoCarroVariosPost(id=self._compatibilidade_controller.ANO,
                                                                     value_ids=data[self.ANOS])
 
-                compatibilidades = [compat_marca, compat_modelo, compat_ano]
+                compatibilidades.append([compat_marca, compat_modelo, compat_ano])
 
+            try:
                 self._await()
-                result = self._compatibilidade_controller.post_compatibilidade_por_dominio(data[self.MLB],
-                                                                                           compatibilidades)
+                result = self._compatibilidade_controller.post_compatibilidade_por_dominio(mlb,
+                                                                   *compatibilidades)
+                print(f"Inseridas {len(data_list)} compatibilidades:")
                 yield True, descricao, result, ""
 
             except Exception as e:
