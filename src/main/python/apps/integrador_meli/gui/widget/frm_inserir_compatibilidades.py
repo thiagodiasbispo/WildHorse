@@ -47,9 +47,9 @@ class FrmInserirCompatibilidadeMeli(QWidget):
                 self._log_info(
                     f"{descricao}: {compat_result.created_compatibilities_count} compatibilidade(s) inserida(s).")
             else:
-                self._log_info(f"{descricao}")
+                self._log_info(f"{descricao}: {mensagem}")
         else:
-            self._log_error(f"{descricao}: Erro {mensagem}")
+            self._log_error(f"{descricao}: {mensagem}")
 
     def _carregamento_finalizado(self):
         self._log_info('Inserção finalizada!')

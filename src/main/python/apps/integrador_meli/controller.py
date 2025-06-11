@@ -176,6 +176,7 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
             return
 
         for mlb, data_list in compatibilidades_expandidas:
+
             marcas = sorted(set([data[self.MARCA] for data in data_list]))
             modelos = sorted(set([data[self.MODELO] for data in data_list]))
             anos = chain.from_iterable([data[self.ANOS_NOME] for data in data_list])
@@ -185,13 +186,13 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
             modelos = ', '.join(modelos)
             anos = ', '.join(map(str, anos))
 
-            descricao = f"{mlb} \nMarcas: [{marcas}] \nModelos: [{modelos}] \nAnos: [{anos}]"
+            descricao = f"{mlb} Marcas: [{marcas}] Modelos: [{modelos}] Anos: [{anos}]"
 
             compatibilidades = []
 
             for data in data_list:
                 if not data[self.ANOS]:
-                    yield False, descricao, None, f"Erro: Nenhum ano disponível para os atributos e anos desejados."
+                    yield False, mlb ,  None, f"Nenhum ano disponível para {data[self.MARCA]} {data[self.MODELO]}."
                     continue
 
                 compat_marca = CompatibilidadeAtributoCarroPost(id=self._compatibilidade_controller.MARCA,
@@ -207,10 +208,12 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
 
             try:
                 self._await()
-                result = self._compatibilidade_controller.post_compatibilidade_por_dominio(mlb,
+                if compatibilidades:
+                    result = self._compatibilidade_controller.post_compatibilidade_por_dominio(mlb,
                                                                    *compatibilidades)
-                print(f"Inseridas {len(data_list)} compatibilidades:")
-                yield True, descricao, result, ""
+                    yield True, descricao, result, ""
+                else:
+                    yield False, descricao, None, f"{mlb} - Nenhuma compatibilidade encontrada para inserção."
                 # yield True, f"Inseridas {len(data_list)} compatibilidades:", None, ""
             except Exception as e:
                 yield False, descricao, None, str(e)
