@@ -7,6 +7,11 @@ from PyQt6.QtGui import QStandardItemModel, QStandardItem
     Referência: https://www.pythonguis.com/tutorials/pyqt6-qtableview-modelviews-numpy-pandas/
 """
 
+def get_value_or_empty_str_if_nan(value):
+    """
+        Retorna uma string vazia se o valor for NaN, caso contrário retorna o valor original.
+    """
+    return "" if pd.isna(value) else str(value)
 
 class TableDataframeModel(QStandardItemModel):
     def __init__(self, df=None):
@@ -37,7 +42,7 @@ class TableDataframeModel(QStandardItemModel):
         columns = self._df.columns
         for i, (_, row) in enumerate(self._df.iterrows()):
             for j, column in enumerate(columns):
-                self.setItem(i, j, QStandardItem(str(row[column])))
+                self.setItem(i, j, QStandardItem(get_value_or_empty_str_if_nan(row[column])))
 
 
 class ItemModelObjectAttributeBased(QStandardItemModel):

@@ -14,7 +14,7 @@ from comum.widget_utils import mostrar_mensagem_sucesso, mostrar_mensagem_erro
 from dominio.meli.api.controller_factory import MeliApiControllerFactory
 
 from dominio.meli.api.autenticacao_utils import orquestrar_obtencao_token
-from wild_horse.configuracoes.gui.ui.configuracoes import Ui_FrmConfiguracoes
+from ancestria.configuracoes.gui.ui.configuracoes import Ui_FrmConfiguracoes
 
 
 class FrmConfiguracoes(QtWidgets.QWidget):

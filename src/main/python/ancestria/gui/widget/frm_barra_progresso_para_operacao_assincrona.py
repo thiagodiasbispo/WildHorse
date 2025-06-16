@@ -1,5 +1,5 @@
 from comum.assincrono import  ExecutorAssincronaDeFuncaoGeradoraBase
-from wild_horse.gui.widget.frm_barra_progresso import FrmBarraProgressoWindow
+from ancestria.gui.widget.frm_barra_progresso import FrmBarraProgressoWindow
 
 
 class FrmBarraProgressoParaExecucaoAssincrona(FrmBarraProgressoWindow):

@@ -92,7 +92,7 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
         self._await()
         return self._catalogo_dominio_controller.get_anos_marca_modelo(marca_id, modelo_id)
 
-    def _expandir_anos(self, ano_inicial, ano_final, marca_id, modelo_id) -> list[str]:
+    def _expandir_anos(self, ano_inicial, ano_final, marca_id, modelo_id) -> tuple[list[str], list[str]]:
         anos_disponiveis = self.anos_disponiveis(marca_id, modelo_id)
 
         anos_disponiveis = [a.to_dict() for a in anos_disponiveis]
@@ -118,7 +118,10 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
             ano_final = int(ano_final)
             anos = anos_disponiveis.query("name <= @ano_final")
 
-        return list(map(str, anos["name"].values))
+        anos_name = list(map(str, anos["name"].values))
+        anos_id = list(map(str, anos["id"].values))
+
+        return anos_name, anos_id
 
     def expandir_planilha_compatibilidade(self, df_compat, df_associacao):
         df = self.get_ids_meli_correspondentes(df_compat, df_associacao)
@@ -141,9 +144,10 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
                         "ano_inicial": ano_inicial,
                         "ano_final": ano_final, }
 
-                anos = self._expandir_anos(ano_inicial, ano_final, data[self.MARCA_ID], data[self.MODELO_ID])
+                anos_name, anos_id = self._expandir_anos(ano_inicial, ano_final, data[self.MARCA_ID], data[self.MODELO_ID])
 
-                data[self.ANOS_NOME] = anos
+                data[self.ANOS] = anos_id
+                data[self.ANOS_NOME] = anos_name
                 data_list.append(data)
             maximo = self._compatibilidade_controller.QUANTIDADE_MAXIMA_DE_INSERCAO_POR_DOMINIO
             if len(data_list) <= maximo:

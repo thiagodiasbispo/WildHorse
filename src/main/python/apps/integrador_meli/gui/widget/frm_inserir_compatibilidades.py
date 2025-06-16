@@ -12,7 +12,7 @@ from comum.widget_models import TableDataframeModel
 from comum.widget_utils import escolher_panilha_excel, mostrar_mensagem_erro_usuario_nao_autenticado, \
     mostrar_cursor_espera, restaurar_cursor
 from dominio.meli.api.autenticacao_utils import usuario_esta_autenticado
-from wild_horse.gui.widget.frm_barra_progresso_para_operacao_assincrona import FrmBarraProgressoParaExecucaoAssincrona
+from ancestria.gui.widget.frm_barra_progresso_para_operacao_assincrona import FrmBarraProgressoParaExecucaoAssincrona
 
 
 class FrmInserirCompatibilidadeMeli(QWidget):
@@ -29,7 +29,7 @@ class FrmInserirCompatibilidadeMeli(QWidget):
         # self.ui.tblCompatibilidades.setModel(TableDataframeModel())
 
     def _log_info(self, mensagem):
-        mensagem = f"<font color='blue'>{mensagem}</font>"
+        mensagem = f"<font color='green'>{mensagem}</font>"
         self._log_html(mensagem)
 
     def _log_error(self, mensagem):

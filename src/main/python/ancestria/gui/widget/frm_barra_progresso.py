@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QDialog
 
-from wild_horse.gui.ui.barra_progresso import Ui_BarraDeProgresso
+from ancestria.gui.ui.barra_progresso import Ui_BarraDeProgresso
 
 
 class FrmBarraProgressoWindow(QDialog):

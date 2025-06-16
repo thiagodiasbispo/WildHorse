@@ -13,7 +13,7 @@ from comum.widget_utils import escolher_diretorio, mostrar_mensagem_erro, mostra
 from dominio.meli.api.autenticacao_utils import usuario_esta_autenticado
 from dominio.meli.api.controller_factory import get_factory
 from dominio.meli.api.models import ProdutosAnunciadosModel
-from wild_horse.gui.widget.frm_barra_progresso_para_operacao_assincrona import FrmBarraProgressoParaExecucaoAssincrona
+from ancestria.gui.widget.frm_barra_progresso_para_operacao_assincrona import FrmBarraProgressoParaExecucaoAssincrona
 
 
 class AnunciosCompatibilidadeModel(ItemModelObjectAttributeBased):

@@ -84,7 +84,7 @@ class MainWindows(QMainWindow):
         frm.exec()
 
     def _abrir_configuracoes(self):
-        from wild_horse.configuracoes.gui.widget.configuracoes import (
+        from ancestria.configuracoes.gui.widget.configuracoes import (
             FrmConfiguracoes,
         )
 
