@@ -15,5 +15,6 @@
     <file>icones/logo.png</file>
     <file>icones/sobre.png</file>
     <file>icones/salvar.png</file>
+
   </qresource>
 </RCC>
