@@ -19,13 +19,13 @@
      <widget class="QWidget" name="widgetApenasIcones" native="true">
       <property name="minimumSize">
        <size>
-        <width>71</width>
+        <width>80</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>71</width>
+        <width>75</width>
         <height>16777215</height>
        </size>
       </property>
@@ -70,8 +70,8 @@ QPushButton:hover
            </property>
            <property name="maximumSize">
             <size>
-             <width>50</width>
-             <height>50</height>
+             <width>75</width>
+             <height>75</height>
             </size>
            </property>
            <property name="font">
@@ -88,7 +88,7 @@ QPushButton:hover
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../../../resources.qrc">:/icones/icones/logo.png</pixmap>
+            <pixmap resource="../../../resources.qrc">:/icones/icones/logo_pequena.ico</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -278,8 +278,11 @@ QPushButton:hover
            <property name="maximumSize">
             <size>
              <width>200</width>
-             <height>200</height>
+             <height>250</height>
             </size>
+           </property>
+           <property name="lineWidth">
+            <number>1</number>
            </property>
            <property name="text">
             <string/>

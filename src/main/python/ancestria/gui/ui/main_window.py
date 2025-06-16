@@ -18,8 +18,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.widgetApenasIcones = QtWidgets.QWidget(parent=self.centralwidget)
-        self.widgetApenasIcones.setMinimumSize(QtCore.QSize(71, 0))
-        self.widgetApenasIcones.setMaximumSize(QtCore.QSize(71, 16777215))
+        self.widgetApenasIcones.setMinimumSize(QtCore.QSize(80, 0))
+        self.widgetApenasIcones.setMaximumSize(QtCore.QSize(75, 16777215))
         self.widgetApenasIcones.setStyleSheet("QWidget{\n"
 "    #background-color: rgba(246, 1, 0, 110);\n"
 "}\n"
@@ -57,7 +57,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy)
-        self.label.setMaximumSize(QtCore.QSize(50, 50))
+        self.label.setMaximumSize(QtCore.QSize(75, 75))
         font = QtGui.QFont()
         font.setPointSize(20)
         font.setBold(True)
@@ -65,7 +65,7 @@ class Ui_MainWindow(object):
         self.label.setFont(font)
         self.label.setStyleSheet("color: rgb(4, 14, 143);")
         self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap(":/icones/icones/logo.png"))
+        self.label.setPixmap(QtGui.QPixmap(":/icones/icones/logo_pequena.ico"))
         self.label.setScaledContents(True)
         self.label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label.setObjectName("label")
@@ -162,7 +162,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.lblLogoEmpresa = QtWidgets.QLabel(parent=self.widgetIconeseNome)
-        self.lblLogoEmpresa.setMaximumSize(QtCore.QSize(200, 200))
+        self.lblLogoEmpresa.setMaximumSize(QtCore.QSize(200, 250))
+        self.lblLogoEmpresa.setLineWidth(1)
         self.lblLogoEmpresa.setText("")
         self.lblLogoEmpresa.setPixmap(QtGui.QPixmap(":/icones/icones/logo.png"))
         self.lblLogoEmpresa.setScaledContents(True)
