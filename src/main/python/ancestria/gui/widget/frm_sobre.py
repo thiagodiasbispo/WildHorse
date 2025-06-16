@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import (
     QDialog
 )
 
-from wild_horse.gui.ui.frm_sobre import Ui_dlgSobre
+from ancestria.gui.ui.frm_sobre import Ui_dlgSobre
 
 
 class FrmSobre(QDialog):

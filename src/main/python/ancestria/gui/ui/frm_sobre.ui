@@ -42,7 +42,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="../../../resources.qrc">:/icones/icones/logo.jpg</pixmap>
+          <pixmap resource="../../../resources.qrc">:/icones/icones/logo.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -69,7 +69,7 @@
        <item>
         <widget class="QFrame" name="frame">
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(240, 240, 240);</string>
+          <string notr="true"/>
          </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
@@ -87,12 +87,8 @@
               <bold>true</bold>
              </font>
             </property>
-            <property name="styleSheet">
-             <string notr="true">background-color: rgb(240, 240, 240);
-font-weight: bold;</string>
-            </property>
             <property name="text">
-             <string>Sistema dedicado a automatizações da Wild Horse Motors</string>
+             <string>ANCESTRIA Integrações</string>
             </property>
            </widget>
           </item>
@@ -124,7 +120,7 @@ font-weight: bold;</string>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(240, 240, 240);</string>
+          <string notr="true"/>
          </property>
          <property name="text">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Versão: &lt;/span&gt;0.0.1 alfa\n\n&lt;/p&gt;&lt;p&gt;Este software faz integração com o Mercado Livre através de sua API, permitindo, dentre outras atividades, o cadastro de compatibilidades de autopeças&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -156,7 +152,7 @@ font-weight: bold;</string>
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(240, 240, 240);</string>
+      <string notr="true"/>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

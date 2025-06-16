@@ -10,8 +10,8 @@
     <file>icones/filtro.png</file>
     <file>icones/desconto.png</file>
     <file>icones/configuracoes.png</file>
-    <file>icones/logo.jpg</file>
     <file>icones/menu_collapse.png</file>
+    <file>icones/logo.png</file>
     <file>icones/sobre.png</file>
     <file>icones/salvar.png</file>
   </qresource>

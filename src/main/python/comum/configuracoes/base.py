@@ -3,8 +3,8 @@ from typing import Iterable
 from datetime import datetime
 from PyQt6.QtCore import QSettings
 
-_NOME_EMPRESA = "WildHorse"
-_NOME_SOFTWARE = "System"
+_NOME_EMPRESA = "ANCESTRIA"
+_NOME_SOFTWARE = "ANCESTRIA"
 
 _CONFIGURACAO_PADRAO = QSettings(_NOME_EMPRESA, _NOME_SOFTWARE)
 

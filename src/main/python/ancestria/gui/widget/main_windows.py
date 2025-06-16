@@ -5,8 +5,8 @@ from PyQt6.QtWidgets import QMainWindow, QWidget, QMenu
 from fbs_runtime.application_context.PyQt6 import ApplicationContext
 
 
-from wild_horse.gui.ui.main_window import Ui_MainWindow
-from wild_horse.gui.widget.frm_sobre import FrmSobre
+from ancestria.gui.ui.main_window import Ui_MainWindow
+from ancestria.gui.widget.frm_sobre import FrmSobre
 
 
 class MainWindows(QMainWindow):

@@ -4,22 +4,21 @@ from pathlib import Path
 
 import qdarktheme
 from fbs_runtime.application_context import is_frozen
-from fbs_runtime.application_context.PyQt6 import ApplicationContext
 
 from comum.configuracoes.configuracao_meli_service import (
     carga_inicial_se_primeira_execucao,
     TipoAmbienteDesenvolvimento,
 )
+
 from comum.widget_utils import mostrar_mensagem_erro
-from wild_horse.gui.widget.main_windows import MainWindows
 
 path = Path(__file__).parent
 
 if not is_frozen():
 
     ui_paths = (
-        path / "wild_horse/gui/ui",
-        path / "wild_horse/configuracoes/gui/ui",
+        path / "ancestria/gui/ui",
+        path / "ancestria/configuracoes/gui/ui",
         path / "apps/integrador_meli/gui/ui",
     )
 
@@ -33,6 +32,9 @@ if not is_frozen():
 
 
 if __name__ == "__main__":
+    from fbs_runtime.application_context.PyQt6 import ApplicationContext
+    from ancestria.gui.widget.main_windows import MainWindows
+
     appctxt = ApplicationContext()  # 1. Instantiate ApplicationContext
     if is_frozen():
         carga_inicial_se_primeira_execucao(
@@ -42,10 +44,11 @@ if __name__ == "__main__":
         carga_inicial_se_primeira_execucao(
             appctxt, TipoAmbienteDesenvolvimento.HOMOLOGACAO
         )
-    if datetime.date.today() > datetime.date(2025, 6, 15):
-        mostrar_mensagem_erro("Esta é uma versão DEMO e sua data de validade expirou em 15/06/2025. ")
+    if datetime.date.today() > datetime.date(2025, 6, 20):
+        mostrar_mensagem_erro("Esta é uma versão DEMO e sua data de validade expirou em 20/06/2025. ")
         sys.exit(0)
-    appctxt.app.setStyleSheet(qdarktheme.load_stylesheet("light"))
+
+    appctxt.app.setStyleSheet(qdarktheme.load_stylesheet("dark"))
     window = MainWindows(appctxt)
     window.show()
     exit_code = appctxt.app.exec()  # 2. Invoke appctxt.app.exec()

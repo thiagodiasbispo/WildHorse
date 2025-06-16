@@ -35,3 +35,9 @@ class MercadoLivreService:
         response.raise_for_status()
         return response.json()
 
+    def delete(self, endpoint, json = None):
+        response = requests.delete(f"{self.base_url}{endpoint}", headers=self.get_headers(), json=json)
+        response.raise_for_status()
+        return response.json()
+
+
