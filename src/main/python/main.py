@@ -44,9 +44,6 @@ if __name__ == "__main__":
         carga_inicial_se_primeira_execucao(
             appctxt, TipoAmbienteDesenvolvimento.HOMOLOGACAO
         )
-    if datetime.date.today() > datetime.date(2025, 6, 20):
-        mostrar_mensagem_erro("Esta é uma versão DEMO e sua data de validade expirou em 20/06/2025. ")
-        sys.exit(0)
 
     appctxt.app.setStyleSheet(qdarktheme.load_stylesheet("dark"))
     window = MainWindows(appctxt)
