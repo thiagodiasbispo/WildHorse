@@ -10,7 +10,7 @@ from comum.configuracoes.configuracao_meli_service import (
     ConfiguracoesAPIMeli,
     atualizar_configuracoes_api_meli,
 )
-from comum.widget_utils import mostrar_mensagem_sucesso, mostrar_mensagem_erro
+from comum.widget_utils import mostrar_mensagem_sucesso, mostrar_mensagem_erro, mostrar_mensagem_warning
 from dominio.meli.api.controller_factory import MeliApiControllerFactory
 
 from dominio.meli.api.autenticacao_utils import orquestrar_obtencao_token
@@ -35,7 +35,18 @@ class FrmConfiguracoes(QtWidgets.QWidget):
     def authorization_code(self):
         return self.ui.edtAuthorizationCode.text()
 
+    def _as_configuracoes_estao_salvas(self):
+        ca = self._get_configuracoes_atualizadas()
+        co = self._configuracoes_originais
+        atributos = ("client_id", "client_secret", "redirect_uri")
+
+        return all(getattr(ca, a) == getattr(co, a) for a in atributos)
+
+
     def _abrir_janela_autenticacao(self):
+        if not self._as_configuracoes_estao_salvas():
+            mostrar_mensagem_warning(self, "Por favor, salve as configurações antes de iniciar a autenticação.")
+            return
 
         try:
             config = self._get_configuracoes_atualizadas()
