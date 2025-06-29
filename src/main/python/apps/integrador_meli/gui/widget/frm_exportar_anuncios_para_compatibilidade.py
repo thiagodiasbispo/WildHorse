@@ -20,13 +20,15 @@ class AnunciosCompatibilidadeModel(ItemModelObjectAttributeBased):
     def __init__(self):
         atributos = {"sku": "SKU", "mlb": "MLB", "title": "Título",
                      "requer_compatibilidade": "Requer compatibilidade",
-                     "tem_sugestao_compabilidade": "Tem sugestão de compatabilidade"}
+                     "tem_sugestao_compabilidade": "Tem sugestão de compatabilidade",
+                     "aceita_compatibilidade_universal": "Aceita compatibilidade universal"}
 
         def sim_nao(x):
             return "Sim" if x else "Não"
 
         formatador = {"tem_sugestao_compabilidade": sim_nao,
-                      "requer_compatibilidade": sim_nao}
+                      "requer_compatibilidade": sim_nao,
+                      "aceita_compatibilidade_universal":sim_nao}
 
         super().__init__(atributos, formatador)
 
@@ -79,7 +81,7 @@ class FrmExportarAnunciosParaCompatibilidade(QWidget):
         return gerador_anuncios
 
     def _criar_barra_progresso_de_carregamento_de_anuncio(self, gerador_anuncios):
-        frm_barra_progresso = FrmBarraProgressoParaExecucaoAssincrona(gerador_anuncios, mensagem="Carregando anúncios")
+        frm_barra_progresso = FrmBarraProgressoParaExecucaoAssincrona(gerador_anuncios, mensagem="Carregando anúncios", parent=self)
         return frm_barra_progresso
 
     def _exportar_anuncios(self):

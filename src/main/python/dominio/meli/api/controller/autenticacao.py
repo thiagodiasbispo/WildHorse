@@ -9,8 +9,9 @@ from dominio.meli.api.controller.comum import (
 
 
 class AutenticacaoController(SystemBaseAutenticationController):
-    def __init__(self, url_autenticacao, url_token, client_id, client_secret, redirect_uri):
+    def __init__(self, url_base, url_autenticacao, url_token, client_id, client_secret, redirect_uri):
         super().__init__()
+        self._url_base = url_base
         self._client_id = client_id
         self._client_secret = client_secret
         self._url_autenticacao = url_autenticacao
@@ -28,12 +29,6 @@ class AutenticacaoController(SystemBaseAutenticationController):
         )
         return url
 
-    # def _get_credenciais(self):
-    #     credenciais_b64 = f"{self._client_id}:{self._client_secret}"
-    #     credenciais_b64 = credenciais_b64.encode("ascii")
-    #     credenciais_b64 = base64.b64encode(credenciais_b64)
-    #     return bytes.decode(credenciais_b64)
-
     @validar_sucesso_requisicao
     def get_token(self, code):
         payload = {
@@ -50,3 +45,8 @@ class AutenticacaoController(SystemBaseAutenticationController):
     def refresh_token(self, refresh_token):
         dice = {"grant_type": "refresh_token", "refresh_token": refresh_token}
         return self.post(self._url_token, {}, json=dice)
+
+    def get_user_id(self, token) -> str:
+        print(f"{self._url_base}/users/me")
+        data = self.get(f"{self._url_base}/users/me", headers={"Authorization": f"Bearer {token}"})
+        return str(data["id"])

@@ -82,6 +82,7 @@ class ProdutosAnunciadosModel(DefaultBaseModel):
     title: str
     requer_compatibilidade: bool
     tem_sugestao_compabilidade: bool
+    aceita_compatibilidade_universal: bool
 
 
 

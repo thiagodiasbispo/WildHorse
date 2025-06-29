@@ -12,6 +12,21 @@ class CatalogoDeDominioController(SystemBaseControllerAutenticated):
     def __init__(self, base_url, token):
         super().__init__(token)
         self._base_url_atributos = f"{base_url}/catalog_domains/{self.DOMINIO_MLB_CARS_AND_VANS}/attributes"
+        self._base_url_compatibilidade = f"{base_url}/catalog/dumps/domains/MLB/compatibilities"
+
+    def get_categorias_com__permissao_compatibilidade_universal(self) -> set[str]:
+        """
+            Retorna as categorias que possuem permissão para compatibilidade universal.
+        """
+        data = self.get(self._base_url_compatibilidade)
+        categorias_permissao = set()
+        for data_nive1 in data:
+            for compatibilidade in data_nive1["compatibilities"]:
+                for categoria in  compatibilidade["categories"]:
+                    if categoria["universal_status"] == "ENABLED":
+                        categorias_permissao.add(categoria["id"])
+
+        return categorias_permissao
 
     @converter_resultado(MarcaGet)
     def get_marcas(self):

@@ -5,6 +5,7 @@ from pathlib import Path
 
 from PyQt6.QtWidgets import QWidget
 
+from ancestria.gui.widget.frm_barra_progresso_para_operacao_assincrona import FrmBarraProgressoParaExecucaoAssincrona
 from apps.integrador_meli.controller import InserirCompatibilidadeController
 from apps.integrador_meli.gui.ui.frm_inserir_compatibilidades_meli import Ui_FrmInserirCompatibilidadesMeli
 from comum.assincrono import ExecutorAssincronaDeFuncaoGeradora
@@ -12,7 +13,6 @@ from comum.widget_models import TableDataframeModel
 from comum.widget_utils import escolher_panilha_excel, mostrar_mensagem_erro_usuario_nao_autenticado, \
     mostrar_cursor_espera, restaurar_cursor
 from dominio.meli.api.autenticacao_utils import usuario_esta_autenticado
-from ancestria.gui.widget.frm_barra_progresso_para_operacao_assincrona import FrmBarraProgressoParaExecucaoAssincrona
 
 
 class FrmInserirCompatibilidadeMeli(QWidget):
@@ -23,10 +23,17 @@ class FrmInserirCompatibilidadeMeli(QWidget):
 
         self.ui.btnAbrirPlanilhaCompatibilidade.clicked.connect(self._abrir_planilha_compatibilidade)
         self.ui.btnPlanilhaMarcaModelosAnos.clicked.connect(self._abrir_panilha_associacao_atributos)
+        self.ui.chkbCompatibilidadeUniversal.stateChanged.connect(self._checkbox_compatibilidade_universal_changed)
+
         self.ui.btnInserirCompatibilidades.clicked.connect(self._inserir_compatibilidades)
+
         self._compatibilidade_controller = InserirCompatibilidadeController()
 
-        # self.ui.tblCompatibilidades.setModel(TableDataframeModel())
+    def _checkbox_compatibilidade_universal_changed(self):
+        not_checked = not self.ui.chkbCompatibilidadeUniversal.isChecked()
+        self.ui.edtPlanilhaAssociacaoAtributos.setEnabled(not_checked)
+        self.ui.btnPlanilhaMarcaModelosAnos.setEnabled(not_checked)
+        self.ui.lblPlanilhaComAssociacaoAtributos.setEnabled(not_checked)
 
     def _log_info(self, mensagem):
         mensagem = f"<font color='green'>{mensagem}</font>"
@@ -56,6 +63,13 @@ class FrmInserirCompatibilidadeMeli(QWidget):
 
     def _criar_inseridor_compatibilidade(self):
         def inserir():
+            if self._is_compatibilidade_universal():
+                print("Iniciando inserção de compatibilidades universais...")
+                yield from self._compatibilidade_controller.inserir_compatibilidade_universal_por_planilha(
+                    self.planilha_compatibilidade
+                )
+                return
+
             print("Iniciando inserção de compatibilidades...")
             yield from self._compatibilidade_controller.inserir_compatibilidade_por_planilha(
                 self.planilha_compatibilidade, self.planilha_associacao_atributos
@@ -93,7 +107,9 @@ class FrmInserirCompatibilidadeMeli(QWidget):
             traceback.print_exc()
 
     def _habilitar_botao_inserir_compatibilidades(self):
-        habilitar = bool(self.planilha_compatibilidade) and bool(self.planilha_associacao_atributos)
+        habilitar = bool(self.planilha_compatibilidade)
+        if not self._is_compatibilidade_universal():
+            habilitar = habilitar and bool(self.planilha_associacao_atributos)
         self.ui.btnInserirCompatibilidades.setEnabled(habilitar)
 
     def _abrir_planilha_compatibilidade(self):
@@ -110,12 +126,25 @@ class FrmInserirCompatibilidadeMeli(QWidget):
 
         self._habilitar_botao_inserir_compatibilidades()
 
+    def _is_compatibilidade_universal(self):
+        return self.ui.chkbCompatibilidadeUniversal.isChecked()
+
+    def _ler_dataframe_planilha_compatibilidade(self):
+        if self._is_compatibilidade_universal():
+            return self._compatibilidade_controller.ler_planilha_compatibilidade_universal(
+                self.planilha_compatibilidade)
+        return self._compatibilidade_controller.ler_planilha_compatibilidade(self.planilha_compatibilidade)
+
     def _atualizar_tabela_compatibilidades(self):
         try:
-            self._log_info("Lendo planilha de compatibilidade...")
+            if self._is_compatibilidade_universal():
+                self._log_info("Lendo planilha de compatibilidade de universal...")
+            else:
+                self._log_info("Lendo planilha de compatibilidade...")
+
             self.repaint()
             mostrar_cursor_espera()
-            df = self._compatibilidade_controller.ler_planilha_compatibilidade(self.planilha_compatibilidade)
+            df = self._ler_dataframe_planilha_compatibilidade()
             if not (model := self.ui.tblCompatibilidades.model()):
                 self.ui.tblCompatibilidades.setModel(TableDataframeModel(df))
             else:

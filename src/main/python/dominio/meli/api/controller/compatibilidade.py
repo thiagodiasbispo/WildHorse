@@ -19,11 +19,18 @@ class CompatibilidadeController(SystemBaseControllerAutenticated):
         super().__init__(token)
         self._base_url = f"{base_url}/items/" + "{mlb}/compatibilities"
 
+
+
+
+    @converter_resultado(ResultadoCompatibilidadePorDominioFamiliaProdutoPost)
+    def post_compatibilidade_universal(self, mlb: str):
+        data = {"universal": True}
+        return self.post(self._base_url.format(mlb=mlb), data=json.dumps(data))
+
     @converter_resultado(ResultadoCompatibilidadePorDominioFamiliaProdutoPost)
     def post_compatibilidade_por_dominio(self, mlb: str,
                                          *compatibilidades_list: tuple[list[
-                                             CompatibilidadeAtributoCarroVariosPost | CompatibilidadeAtributoCarroVariosPost],...]) -> ResultadoCompatibilidadePorDominioFamiliaProdutoPost:
-
+                                             CompatibilidadeAtributoCarroVariosPost | CompatibilidadeAtributoCarroVariosPost], ...]) -> ResultadoCompatibilidadePorDominioFamiliaProdutoPost:
         comp = [CompatibilidadePorDominioFamiliaProdutoPost(domain_id=self.DOMAIN_MLB_CARS_AND_VAN,
                                                             attributes=compatibilidades) for compatibilidades in
                 compatibilidades_list]

@@ -72,6 +72,7 @@ class FrmConfiguracoes(QtWidgets.QWidget):
             ui.edtRefreshToken.setText(config.refresh_token)
             ui.edtValidadeToken.setText(config.validade_token)
             ui.edtRedirectUri.setText(config.redirect_uri)
+            ui.edtUserId.setText(config.user_id or "")
 
         except Exception as e:
             mostrar_mensagem_erro(
@@ -79,7 +80,7 @@ class FrmConfiguracoes(QtWidgets.QWidget):
             )
     def _atualizar_token(self):
         try:
-            orquestrar_obtencao_token(self.authorization_code)
+            orquestrar_obtencao_token(self.authorization_code, update_user_id=not self._configuracoes_originais.user_id)
             mostrar_mensagem_sucesso(self, "Token atualizado com sucesso!")
             mostrar_mensagem_sucesso(self, "Configurações atualizadas com sucesso!")
             self._carregar_configuracoes()
@@ -101,7 +102,8 @@ class FrmConfiguracoes(QtWidgets.QWidget):
             ultimo_token=self.ui.edtToken.text(),
             refresh_token=self.ui.edtRefreshToken.text(),
             validade_token=self.ui.edtValidadeToken.text(),
-            authorization_code=self.authorization_code
+            authorization_code=self.authorization_code,
+            user_id = self.ui.edtUserId.text()
         )
 
     def _salvar_configuracoes(self):

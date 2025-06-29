@@ -53,7 +53,7 @@ def refresh_token(config=None):
     print("Token atualizado e exportado com sucesso")
 
 
-def orquestrar_obtencao_token(code):
+def orquestrar_obtencao_token(code, update_user_id=False):
     print("Obtendo novo token")
 
     config = ler_configuracoes_api_meli()
@@ -61,6 +61,13 @@ def orquestrar_obtencao_token(code):
     autenticacao_controller = controller_factory.autenticacao_controller
 
     token_data = autenticacao_controller.get_token(code)
+
+    if update_user_id:
+        user_id = autenticacao_controller.get_user_id(token_data["access_token"])
+
+        config_dict = config.to_dict()
+        config_dict["user_id"] = user_id
+        config = ConfiguracoesAPIMeli.from_dict(config_dict)
 
     _update_config(config, token_data)
     print("Token obtido e exportado com sucesso")

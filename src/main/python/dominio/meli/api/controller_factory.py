@@ -22,6 +22,8 @@ class MeliApiControllerFactory:
             self._anuncio = AnuncioController(
                 base_url=self._config.url_base,
                 token=self._config.ultimo_token,
+                user_id=self._config.user_id,
+                catalogo_controller = self.catalogo_dominio_controller,
             )
         return self._anuncio
 
@@ -47,6 +49,7 @@ class MeliApiControllerFactory:
     def autenticacao_controller(self) -> AutenticacaoController:
         if self._autenticacao is None:
             self._autenticacao = AutenticacaoController(
+                url_base = self._config.url_base,
                 url_autenticacao=self._config.url_autenticacao,
                 url_token=self._config.url_token,
                 client_id=self._config.client_id,

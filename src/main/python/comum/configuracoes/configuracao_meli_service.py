@@ -1,5 +1,6 @@
 from dataclasses import dataclass, asdict, fields
 from enum import Enum
+from typing import Optional
 
 from fbs_runtime.application_context.PyQt6 import ApplicationContext
 
@@ -27,7 +28,7 @@ class TipoAmbienteDesenvolvimento(Enum):
 class ConfiguracoesAPIMeli:
     client_id: str
     client_secret: str
-    authorization_code:str
+    authorization_code: str
     url_base: str
     url_token: str
     url_autenticacao: str
@@ -35,6 +36,7 @@ class ConfiguracoesAPIMeli:
     ultimo_token: str
     refresh_token: str
     validade_token: str
+    user_id: Optional[str] = ""
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -42,7 +44,6 @@ class ConfiguracoesAPIMeli:
 
     def to_dict(self):
         return asdict(self)
-        return data
 
 
 def _get_meli_file_prod(app_context: ApplicationContext):
@@ -64,9 +65,8 @@ def atualizar_configuracoes_api_meli(config: ConfiguracoesAPIMeli) -> None:
 
 
 def carga_inicial_se_primeira_execucao(
-    app_context: ApplicationContext, ambiente=TipoAmbienteDesenvolvimento.PRODUCAO
+        app_context: ApplicationContext, ambiente=TipoAmbienteDesenvolvimento.PRODUCAO
 ):
-
     if configuracoes_contem_secao(f"{_MELI_API_SECAO}/client_id"):
         return
 
@@ -78,22 +78,8 @@ def carga_inicial_se_primeira_execucao(
     atualizar_configuracao(_MELI_API_SECAO, dados["api"])
 
 
-def configurar_para_ambiente_homologacao(app_context: ApplicationContext):
-    dados = ler_configuracoes_padrao(_get_meli_file_prod(app_context))
-    atualizar_configuracao(_MELI_API_SECAO, dados["api"])
-
-
-def configurar_para_ambiente_producao(app_context: ApplicationContext):
-    dados = ler_configuracoes_padrao(_get_meli_file_prod(app_context))
-    atualizar_configuracao(_MELI_API_SECAO, dados["api"])
-
-
 def get_ambiente_desenvolvimento():
     ambiente_configurado = ler_configuracao(
         f"{_MELI_API_SECAO}/ambiente_desenvolvimento"
     )
     return TipoAmbienteDesenvolvimento(ambiente_configurado)
-
-
-def eh_ambiente_homologacao():
-    return get_ambiente_desenvolvimento() == TipoAmbienteDesenvolvimento.HOMOLOGACAO

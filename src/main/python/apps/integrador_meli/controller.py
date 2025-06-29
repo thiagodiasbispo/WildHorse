@@ -87,6 +87,11 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
         df = pd.read_excel(planilha_compatibilidade, dtype={self.MARCA: str, self.MODELO: str})
         return df
 
+    def ler_planilha_compatibilidade_universal(self, planilha_compatibilidade_universal):
+        print("Lendo planilha de compatibilidade universal:", planilha_compatibilidade_universal)
+        df = pd.read_excel(planilha_compatibilidade_universal, dtype={self.MARCA: str})
+        return df
+
     @functools.lru_cache(maxsize=1024)
     def anos_disponiveis(self, marca_id: str, modelo_id: str):
         self._await()
@@ -144,7 +149,8 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
                         "ano_inicial": ano_inicial,
                         "ano_final": ano_final, }
 
-                anos_name, anos_id = self._expandir_anos(ano_inicial, ano_final, data[self.MARCA_ID], data[self.MODELO_ID])
+                anos_name, anos_id = self._expandir_anos(ano_inicial, ano_final, data[self.MARCA_ID],
+                                                         data[self.MODELO_ID])
 
                 data[self.ANOS] = anos_id
                 data[self.ANOS_NOME] = anos_name
@@ -155,6 +161,27 @@ class InserirCompatibilidadeController(RequisitionAwaiter):
             else:
                 for i in range(0, len(data_list), maximo):
                     yield mlb, data_list[i:i + maximo]
+
+    def inserir_compatibilidade_universal_por_planilha(self, planilha_compatibilidade):
+        """
+        Insere compatibilidades de atributos de carros a partir de uma planilha de compatibilidade
+
+        :param planilha_compatibilidade: Caminho para a planilha de compatibilidade.
+        :return: Gerador que produz tuplas com o status da inserção, descrição, resultado e mensagem de erro (se houver).
+        """
+        yield True, f"Relendo planilha de compatibilidades universais", None, ""
+        df_compat = self.ler_planilha_compatibilidade_universal(planilha_compatibilidade)
+
+        yield True, f"Validando valores em colunas", None, ""
+        self._validar_planilha_colunas(df_compat, planilha_compatibilidade,[self.MLB])
+
+        for mlb in df_compat[self.MLB].str.strip().values:
+            try:
+                result = self._compatibilidade_controller.post_compatibilidade_universal(mlb)
+                yield True, mlb, result, ""
+            except Exception as e:
+                yield False, mlb, None, str(e)
+
 
     def inserir_compatibilidade_por_planilha(self, planilha_compatibilidade, planilha_associacao_atributos):
         try:
